@@ -51,7 +51,7 @@ import { ME } from "../src/queries"
 </Flex>
 */
 
-const Home: NextPage = () => {
+const ParkingLot: NextPage = () => {
   const { loading, error, data } = useQuery(ME)
   const { colorMode, toggleColorMode } = useColorMode()
 
@@ -62,54 +62,7 @@ const Home: NextPage = () => {
   return (
     <>
       <NavBar />
-      <Flex direction="column" px={36}>
-        <Heading>Parking Lots</Heading>
-        <Flex direction="column" w={"50%"} mt={10}>
-          <NextLink href="/parking-lot">
-            <Link
-              mr={2}
-              mb={3}
-              shadow="md"
-              bg="#37b47e"
-              color="white"
-              textAlign="center"
-              p={4}
-              borderRadius={12}
-            >
-              Parking Slot 1
-            </Link>
-          </NextLink>
-          <NextLink href="/login">
-            <Link
-              mr={2}
-              mb={3}
-              shadow="md"
-              bg="#37b47e"
-              color="white"
-              textAlign="center"
-              p={4}
-              borderRadius={12}
-            >
-              Parking Slot 1
-            </Link>
-          </NextLink>
-          <NextLink href="/login">
-            <Link
-              mr={2}
-              mb={3}
-              shadow="md"
-              bg="#37b47e"
-              color="white"
-              textAlign="center"
-              p={4}
-              borderRadius={12}
-            >
-              Parking Slot 1
-            </Link>
-          </NextLink>
-        </Flex>
-      </Flex>
-      {/* <Flex p={10} justifyContent="center">
+      <Flex p={10} justifyContent="center">
         <SimpleGrid columns={6} spacing="10">
           <Box bg="tomato" p={8} _hover={{ opacity: 0.8 }} transition="0.3s">
             <Flex
@@ -139,9 +92,9 @@ const Home: NextPage = () => {
             </Flex>
           </Box>
         </SimpleGrid>
-      </Flex> */}
+      </Flex>
     </>
   )
 }
 
-export default Home
+export default ParkingLot
