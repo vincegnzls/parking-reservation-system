@@ -16,12 +16,13 @@ import {
   useColorMode,
   Link,
   Heading,
+  Image,
 } from "@chakra-ui/react"
 import NextLink from "next/link"
 import type { NextPage } from "next"
-import { useEffect } from "react"
+import { Component, useEffect } from "react"
 import NavBar from "../src/components/NavBar"
-import { ME } from "../src/queries"
+import { GET_PARKING_LOTS, ME } from "../src/queries"
 
 /*
 <Flex
@@ -52,62 +53,58 @@ import { ME } from "../src/queries"
 */
 
 const Home: NextPage = () => {
-  const { loading, error, data } = useQuery(ME)
+  const { loading, error, data } = useQuery(GET_PARKING_LOTS)
   const { colorMode, toggleColorMode } = useColorMode()
 
   useEffect(() => {
-    console.log("ME QUERY", data)
+    console.log("GET_PARKING_LOTS QUERY", data)
   }, [data])
+
+  const renderParkingLots = (): React.ReactNode => {
+    //textAlign="left" mt={10}
+    return (
+      // <Flex direction="column" alignItems="flex-start" textAlign="left" mt={10}>
+      <SimpleGrid minChildWidth={"50px"} spacing="20px" mt={10}>
+        {loading
+          ? null
+          : data.getParkingLots.map((parkingLot: any, index: number) => {
+              return (
+                <>
+                  <NextLink key={index} href="/parking-lot">
+                    <Link
+                      mr={2}
+                      mb={3}
+                      shadow="md"
+                      bg="#37b47e"
+                      color="white"
+                      px={10}
+                      py={4}
+                      borderRadius={12}
+                    >
+                      <Flex direction="column">
+                        <Heading size="md">Parking Lot {parkingLot.id}</Heading>
+                        <p>No. of Entries: {parkingLot.entryPointsCount}</p>
+                        <p>
+                          No. of Parking Spaces:{" "}
+                          {parkingLot.parkingSlots.length}
+                        </p>
+                      </Flex>
+                    </Link>
+                  </NextLink>
+                </>
+              )
+            })}
+      </SimpleGrid>
+      // </Flex>
+    )
+  }
 
   return (
     <>
       <NavBar />
       <Flex direction="column" px={36}>
         <Heading>Parking Lots</Heading>
-        <Flex direction="column" w={"50%"} mt={10}>
-          <NextLink href="/parking-lot">
-            <Link
-              mr={2}
-              mb={3}
-              shadow="md"
-              bg="#37b47e"
-              color="white"
-              textAlign="center"
-              p={4}
-              borderRadius={12}
-            >
-              Parking Slot 1
-            </Link>
-          </NextLink>
-          <NextLink href="/login">
-            <Link
-              mr={2}
-              mb={3}
-              shadow="md"
-              bg="#37b47e"
-              color="white"
-              textAlign="center"
-              p={4}
-              borderRadius={12}
-            >
-              Parking Slot 1
-            </Link>
-          </NextLink>
-          <NextLink href="/login">
-            <Link
-              mr={2}
-              mb={3}
-              shadow="md"
-              bg="#37b47e"
-              color="white"
-              textAlign="center"
-              p={4}
-              borderRadius={12}
-            >
-              Parking Slot 1
-            </Link>
-          </NextLink>
-        </Flex>
+        {renderParkingLots()}
       </Flex>
       {/* <Flex p={10} justifyContent="center">
         <SimpleGrid columns={6} spacing="10">

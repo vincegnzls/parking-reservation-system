@@ -11,6 +11,7 @@ import Redis from "ioredis"
 import { ParkingLotResolver } from "../../../lib/serverless/graphql/resolvers/ParkingLotResolver"
 import { ApolloServerLoaderPlugin } from "type-graphql-dataloader"
 import { getConnection } from "typeorm"
+import { VehicleResolver } from "../../../lib/serverless/graphql/resolvers/VehicleResolver"
 
 const cors = Cors()
 
@@ -26,7 +27,7 @@ export const config: PageConfig = {
 
 const apolloServer = new ApolloServer({
   schema: await buildSchema({
-    resolvers: [HelloWorldResolver, ParkingLotResolver],
+    resolvers: [HelloWorldResolver, ParkingLotResolver, VehicleResolver],
   }),
   context: async ({ req, res }) => {
     try {

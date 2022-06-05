@@ -4,12 +4,12 @@ import {
   Column,
   Entity,
   JoinColumn,
-  JoinTable,
   ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm"
+import { getRate } from "../utils/rate"
 
 export enum ParkingType {
   SP = 1,
@@ -81,7 +81,7 @@ export class Vehicle extends BaseEntity {
   id!: number
 
   @Field(() => String)
-  @Column("text")
+  @Column("text", { unique: true })
   plateNumber!: string
 
   @Field(() => Number)
@@ -97,16 +97,42 @@ export class Vehicle extends BaseEntity {
   checkInTime?: Date = new Date()
 
   @Field(() => Date, { nullable: true })
-  @Column({ type: "timestamptz" })
-  checkOutTime?: Date
+  @Column({ type: "timestamptz", nullable: true })
+  checkOutTime?: Date | null
 
   @Field(() => ParkingSlot, { nullable: true })
   @OneToOne(() => ParkingSlot, (parkingSlot) => parkingSlot.vehicle)
-  parkingSlot?: Vehicle
+  parkingSlot?: Vehicle | null
+
+  @Field(() => Number, { nullable: true })
+  @Column({ type: "numeric", nullable: true })
+  lastBillPaid?: number
 
   @Field((type) => Number)
-  runningBill(): number {
-    return 20
+  async currentBill(checkOutTime?: Date): Promise<number> {
+    return await getRate({
+      _vehicleId: this.id,
+      _checkInTime: this.checkInTime,
+      _checkOutTime: this.checkOutTime ? this.checkOutTime : checkOutTime,
+      // _hours: 25,
+    })
+  }
+
+  isContinuousRate(newCheckInTime: Date): boolean {
+    if (this.checkOutTime) {
+      const reEntryDuration = Math.ceil(
+        Math.abs(newCheckInTime.getTime() - this.checkOutTime.getTime()) / 36e5
+      )
+
+      console.log(
+        Math.abs(newCheckInTime.getTime() - this.checkOutTime.getTime()) / 36e5
+      )
+      console.log("reEntryDuration", reEntryDuration)
+
+      return reEntryDuration <= 1
+    }
+
+    return false
   }
 }
 
@@ -132,7 +158,11 @@ export class ParkingSlot extends BaseEntity {
   @Field(() => Vehicle, { nullable: true })
   @OneToOne(() => Vehicle, (vehicle) => vehicle.parkingSlot)
   @JoinColumn()
-  vehicle?: Vehicle
+  vehicle?: Vehicle | null
+
+  @Field(() => Boolean, { defaultValue: true })
+  @Column({ type: "boolean", default: true })
+  isAvailable: boolean = true
 
   @Field(() => [EntryPointToParkingSlotDistance])
   @OneToMany(

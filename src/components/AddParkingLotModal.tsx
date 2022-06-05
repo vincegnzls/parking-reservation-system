@@ -73,7 +73,7 @@ const AddParkingLotModal: React.FC<AddParkingLotModalProps> = ({}) => {
             </Box>
             <Box mt={2}>
               <Text>Number of Entry Points:</Text>
-              <NumberInput defaultValue={1} min={1} max={20}>
+              <NumberInput defaultValue={3} min={3} max={10}>
                 <NumberInputField />
                 <NumberInputStepper>
                   <NumberIncrementStepper />
