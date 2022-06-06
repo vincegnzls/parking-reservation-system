@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { forwardRef, useEffect, useState } from "react"
 import { useMutation } from "@apollo/client"
 import {
   Button,
@@ -15,12 +15,14 @@ import {
   Alert,
   AlertIcon,
   useToast,
+  Input,
 } from "@chakra-ui/react"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { Form, Formik } from "formik"
 import { useRouter, withRouter } from "next/router"
 import { UNPARK } from "../mutations"
+import CustomDateInput from "./CustomDateInput"
 
 const UnparkModal: React.FC<any> = ({
   fetchParkingSlots,
@@ -93,9 +95,9 @@ const UnparkModal: React.FC<any> = ({
                 <ModalCloseButton />
                 <ModalBody>
                   <Box mt={2}>
+                    <Text>Plate Number: {parkingSlot.vehicle.plateNumber}</Text>
                     <Text>Check Out Time:</Text>
                     <DatePicker
-                      // className="chakra-input css-6m1gab css-lt2rku"
                       name="checkOutTime"
                       required
                       selected={checkOutTime}
@@ -103,6 +105,7 @@ const UnparkModal: React.FC<any> = ({
                       showTimeSelect
                       dateFormat="Pp"
                       timeIntervals={1}
+                      customInput={<CustomDateInput />}
                     />
                   </Box>
                   {errorMessage.length ? (

@@ -27,6 +27,7 @@ import { GET_ENTRY_POINTS_BY_ID, GET_VEHICLE_BY_PLATE_NUMBER } from "../queries"
 import { ParkingLotQuery, VehicleSize } from "../types"
 import { PARK } from "../mutations"
 import moment from "moment"
+import CustomDateInput from "./CustomDateInput"
 
 const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
   const router = useRouter()
@@ -191,7 +192,6 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
                   <Box mt={2}>
                     <Text>Check In Time:</Text>
                     <DatePicker
-                      // className="chakra-input css-6m1gab css-lt2rku"
                       name="checkInTime"
                       minDate={moment().toDate()}
                       required
@@ -200,6 +200,7 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
                       showTimeSelect
                       dateFormat="Pp"
                       timeIntervals={1}
+                      customInput={<CustomDateInput />}
                     />
                   </Box>
                   {errorMessage.length ? (

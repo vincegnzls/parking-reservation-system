@@ -1,18 +1,10 @@
-import { useLazyQuery, useQuery } from "@apollo/client"
-import {
-  Flex,
-  SimpleGrid,
-  useColorMode,
-  Link,
-  Heading,
-  Spinner,
-} from "@chakra-ui/react"
+import { useQuery } from "@apollo/client"
+import { Flex, SimpleGrid, Link, Heading, Spinner } from "@chakra-ui/react"
 import NextLink from "next/link"
 import type { NextPage } from "next"
 import { useEffect, useState } from "react"
 import NavBar from "../src/components/NavBar"
 import { GET_PARKING_LOTS, ME } from "../src/queries"
-import client from "../apollo-client"
 
 type Props = {
   data?: any[]
@@ -22,14 +14,6 @@ type Props = {
 const Home: NextPage = (props: Props) => {
   const { loading, error, data, refetch } = useQuery(GET_PARKING_LOTS)
   const [parkingLots, setParkingLots] = useState<any[]>([])
-  const { colorMode, toggleColorMode } = useColorMode()
-
-  // useEffect(() => {
-  //   if (props.data && props.data?.length) {
-  //     setParkingLots(props.data)
-  //     console.log(props.data)
-  //   }
-  // }, [props.data])
 
   useEffect(() => {
     refetch()
@@ -105,54 +89,8 @@ const Home: NextPage = (props: Props) => {
         <Heading>Parking Lots</Heading>
         {renderParkingLots()}
       </Flex>
-      {/* <Flex p={10} justifyContent="center">
-        <SimpleGrid columns={6} spacing="10">
-          <Box bg="tomato" p={8} _hover={{ opacity: 0.8 }} transition="0.3s">
-            <Flex
-              direction={"column"}
-              justifyContent="center"
-              alignItems="center"
-              h="100%"
-            >
-              <Tag
-                size={"md"}
-                borderRadius="full"
-                variant="solid"
-                colorScheme="blackAlpha"
-              >
-                Slot 2 - SP
-              </Tag>
-              <Tag
-                size={"md"}
-                borderRadius="full"
-                variant="solid"
-                colorScheme="blackAlpha"
-                textAlign="center"
-                mt={2}
-              >
-                124XYZ
-              </Tag>
-            </Flex>
-          </Box>
-        </SimpleGrid>
-      </Flex> */}
     </>
   )
 }
-
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   const { error, data } = await client.query({
-//     query: GET_PARKING_LOTS,
-//   })
-
-//   console.log(data)
-
-//   return {
-//     props: {
-//       data: data.getParkingLots,
-//       error: error ? error.message : null,
-//     },
-//   }
-// }
 
 export default Home
