@@ -27,13 +27,10 @@ const ParkingLot: NextPage = () => {
   const unparkModal = useDisclosure()
   const feeSummaryModal = useDisclosure()
   const [parkingSlot, setParkingSlot] = useState<number | null>(null)
+  const [lastFee, setLastFee] = useState<any>(null)
   const { loading, data, refetch } = useQuery(GET_PARKING_LOT_BY_ID, {
     variables: { getParkingLotByIdId: parseInt(id ? id : "1") },
   })
-
-  useEffect(() => {
-    feeSummaryModal.onOpen()
-  }, [])
 
   useEffect(() => {
     if (data && data.getParkingLotById && !loading) {
@@ -173,7 +170,7 @@ const ParkingLot: NextPage = () => {
   const renderParkingSlots = () => {
     return parkingSlots.map((parkingSlot, idx) => {
       return (
-        <Flex direction="column">
+        <Flex key={idx} direction="column">
           <Box
             key={idx}
             bg={`${parkingSlot.vehicle ? "tomato" : "#37b47e"}`}
@@ -189,7 +186,7 @@ const ParkingLot: NextPage = () => {
               h="100%"
             >
               <Tag
-                size={"md"}
+                size={"lg"}
                 borderRadius="full"
                 variant="solid"
                 colorScheme="blackAlpha"
@@ -247,6 +244,8 @@ const ParkingLot: NextPage = () => {
         direction="column"
         justifyContent="center"
         px={{ base: 12, md: 24, lg: 36 }}
+        pb={16}
+        scrollBehavior="auto"
       >
         <Flex>{renderEntryPoints()}</Flex>
         <SimpleGrid
@@ -258,12 +257,14 @@ const ParkingLot: NextPage = () => {
       </Flex>
       <UnparkModal
         fetchParkingSlots={fetchParkingSlots}
+        feeSummaryModal={feeSummaryModal}
+        setLastFee={setLastFee}
         parkingSlot={parkingSlot}
         isOpen={unparkModal.isOpen}
         onOpen={unparkModal.onOpen}
         onClose={unparkModal.onClose}
       />
-      <FeeSummaryModal feeSummaryModal={feeSummaryModal} />
+      <FeeSummaryModal feeSummaryModal={feeSummaryModal} lastFee={lastFee} />
     </>
   )
 }

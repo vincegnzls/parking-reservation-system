@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import { useMutation, useQuery } from "@apollo/client"
+import React, { useEffect, useState } from "react"
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client"
 import {
   useDisclosure,
   Button,
@@ -23,7 +23,7 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { Form, Formik } from "formik"
 import { useRouter, withRouter } from "next/router"
-import { GET_ENTRY_POINTS_BY_ID } from "../queries"
+import { GET_ENTRY_POINTS_BY_ID, GET_VEHICLE_BY_PLATE_NUMBER } from "../queries"
 import { ParkingLotQuery, VehicleSize } from "../types"
 import { PARK } from "../mutations"
 import moment from "moment"
@@ -36,9 +36,26 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
   const entryPointsQuery = useQuery(GET_ENTRY_POINTS_BY_ID, {
     variables: { id: parseInt(id ? id : "1") },
   })
+  const [getVehicle, { loading, error, data }] = useLazyQuery(
+    GET_VEHICLE_BY_PLATE_NUMBER,
+    { fetchPolicy: "no-cache" }
+  )
   const [park] = useMutation(PARK)
   const [checkInTime, setCheckInTime] = useState<Date | null>(new Date())
   const [errorMessage, setErrorMessage] = useState<string>("")
+  const [carSize, setCarSize] = useState<string>("")
+
+  useEffect(() => {
+    console.log(data)
+    if (data?.getVehicleByPlateNumber) {
+      if (data?.getVehicleByPlateNumber.checkOutTime) {
+        setCheckInTime(new Date(data?.getVehicleByPlateNumber.checkOutTime))
+      }
+      if (data?.getVehicleByPlateNumber.size) {
+        setCarSize(data?.getVehicleByPlateNumber.size)
+      }
+    }
+  }, [data])
 
   const renderEntryPointOptions = () => {
     if (entryPointsQuery.data) {
@@ -72,19 +89,17 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
           checkInTime,
           parkingLotId: parseInt(id ? id : "1"),
           entryPointId: parseInt(values.entryPointId),
-          size: parseInt(values.size),
+          size: parseInt(carSize),
         },
       },
     })
-
-    console.log("PARK RESPONSE", data, errors)
 
     if (data.park.errorMessage) {
       setErrorMessage(data.park.errorMessage)
     } else {
       toast({
         title: "Parking Success",
-        description: `You have successfully been parked to the nearest entrance! ${
+        description: `Vehicle successfully been parked to the nearest entrance! ${
           data?.park?.vehicle?.isContinuousRate
             ? "Continuous rate has been applied."
             : ""
@@ -101,6 +116,12 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
         await fetchParkingSlots()
       }
     }
+  }
+
+  const onPlateNumberChange = async (e: any, handleChange: any) => {
+    handleChange(e)
+    console.log(e.target.value)
+    await getVehicle({ variables: { plateNumber: e.target.value } })
   }
 
   return (
@@ -152,7 +173,7 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
                       name="plateNumber"
                       required
                       value={values.plateNumber}
-                      onChange={handleChange}
+                      onChange={(e) => onPlateNumberChange(e, handleChange)}
                     />
                   </Box>
                   <Box mt={2}>
@@ -161,8 +182,8 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
                       placeholder="Select Car Size"
                       name="size"
                       required
-                      onChange={handleChange}
-                      value={values.size}
+                      onChange={(e) => setCarSize(e.target.value)}
+                      value={carSize}
                     >
                       {renderCarSizeOptions()}
                     </Select>

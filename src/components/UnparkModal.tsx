@@ -28,6 +28,8 @@ const UnparkModal: React.FC<any> = ({
   isOpen,
   onOpen,
   onClose,
+  feeSummaryModal,
+  setLastFee,
 }) => {
   const router = useRouter()
   const toast = useToast()
@@ -60,7 +62,11 @@ const UnparkModal: React.FC<any> = ({
     } else {
       toast({
         title: "Checkout Success",
-        description: "You have successfully been checked out!",
+        description: `Vehicle with plate number ${
+          data.unpark.vehicle.plateNumber
+        } has successfully been checked out! Total fee paid is P${data.unpark.vehicle.lastBillPaid.toFixed(
+          2
+        )}.`,
         status: "success",
         duration: 9000,
         isClosable: true,

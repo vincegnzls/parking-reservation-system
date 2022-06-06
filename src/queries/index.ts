@@ -62,3 +62,15 @@ export const GET_ENTRY_POINTS_BY_ID = gql`
     }
   }
 `
+
+export const GET_VEHICLE_BY_PLATE_NUMBER = gql`
+  query GetVehicleByPlateNumber($plateNumber: String!) {
+    getVehicleByPlateNumber(plateNumber: $plateNumber) {
+      id
+      size
+      checkInTime
+      lastCheckInTime
+      checkOutTime
+    }
+  }
+`

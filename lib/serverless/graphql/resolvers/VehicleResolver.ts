@@ -22,4 +22,17 @@ export class VehicleResolver {
     })
     return vehicle
   }
+
+  @Query(() => Vehicle, { nullable: true })
+  async getVehicleByPlateNumber(
+    @Arg("plateNumber") plateNumber: string
+  ): Promise<Vehicle | null> {
+    const vehicle = await Vehicle.findOne({
+      where: { plateNumber },
+      relations: {
+        parkingSlot: true,
+      },
+    })
+    return vehicle
+  }
 }

@@ -9,18 +9,12 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Text,
   Box,
   Flex,
   Input,
 } from "@chakra-ui/react"
 import { Form, Formik } from "formik"
-import router from "next/router"
 import React from "react"
 import { CREATE_PARKING_LOT } from "../mutations"
 
@@ -88,21 +82,6 @@ const AddParkingLotModal: React.FC<AddParkingLotModalProps> = ({
                       value={values.sCount}
                       onChange={handleChange}
                     />
-                    {/* <NumberInput
-                      // defaultValue={1}
-                      min={1}
-                      max={20}
-                      id="sCount"
-                      name="sCount"
-                      value={values.sCount}
-                      onChange={handleChange}
-                    >
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput> */}
                   </Box>
                   <Box mt={2}>
                     <Text>Medium Count:</Text>
@@ -114,18 +93,6 @@ const AddParkingLotModal: React.FC<AddParkingLotModalProps> = ({
                       value={values.mCount}
                       onChange={handleChange}
                     />
-                    {/* <NumberInput
-                      min={1}
-                      max={20}
-                      name="mCount"
-                      value={values.mCount}
-                    >
-                      <NumberInputField onChange={handleChange} />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput> */}
                   </Box>
                   <Box mt={2}>
                     <Text>Large Count:</Text>
@@ -137,20 +104,6 @@ const AddParkingLotModal: React.FC<AddParkingLotModalProps> = ({
                       value={values.lCount}
                       onChange={handleChange}
                     />
-                    {/* <NumberInput
-                      // defaultValue={1}
-                      min={1}
-                      max={20}
-                      name="lCount"
-                      value={values.lCount}
-                      onChange={handleChange}
-                    >
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput> */}
                   </Box>
                   <Box mt={2}>
                     <Text>Number of Entry Points:</Text>
@@ -162,20 +115,6 @@ const AddParkingLotModal: React.FC<AddParkingLotModalProps> = ({
                       value={values.entryPointsCount}
                       onChange={handleChange}
                     />
-                    {/* <NumberInput
-                      // defaultValue={3}
-                      min={3}
-                      max={10}
-                      name="entryPointsCount"
-                      value={values.entryPointsCount}
-                      onChange={handleChange}
-                    >
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput> */}
                   </Box>
                 </ModalBody>
 

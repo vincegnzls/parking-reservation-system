@@ -223,6 +223,14 @@ export class ParkingLotResolver {
               isContinuousRate,
             }
           )
+          if (!isContinuousRate) {
+            await Vehicle.update(
+              { id: vehicle.id },
+              {
+                totalContinuousBill: 0,
+              }
+            )
+          }
           await ParkingSlot.update(
             { id: parkingSlot.id },
             { vehicle, isAvailable: false }
@@ -272,10 +280,6 @@ export class ParkingLotResolver {
       let totalContinuousBill =
         parseFloat(vehicle.totalContinuousBill.toString()) +
         parseFloat(continuousBill.toString())
-
-      if (!vehicle.isContinuousRate && vehicle.totalContinuousBill > 0) {
-        totalContinuousBill = 0
-      }
 
       await Vehicle.update(
         { id: vehicle.id },

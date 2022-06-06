@@ -28,7 +28,7 @@ import { ParkingLotQuery, VehicleSize } from "../types"
 import { PARK } from "../mutations"
 import moment from "moment"
 
-const FeeSummaryModal: React.FC<any> = ({ feeSummaryModal }) => {
+const FeeSummaryModal: React.FC<any> = ({ feeSummaryModal, lastFee }) => {
   const router = useRouter()
   const toast = useToast()
   const { id }: ParkingLotQuery = router.query
@@ -40,7 +40,7 @@ const FeeSummaryModal: React.FC<any> = ({ feeSummaryModal }) => {
         <ModalContent>
           <ModalHeader>Checkout Receipt</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>You paid a total of P200!</ModalBody>
+          <ModalBody>You paid a total of P{lastFee}!</ModalBody>
           <ModalFooter>
             <Flex justifyContent="space-between" w="100%">
               <Button colorScheme="blue" onClick={feeSummaryModal.onClose}>
