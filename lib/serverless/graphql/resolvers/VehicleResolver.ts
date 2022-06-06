@@ -13,7 +13,7 @@ export class VehicleResolver {
   }
 
   @Query(() => Vehicle, { nullable: true })
-  async getParkingLotById(@Arg("id") id: number): Promise<Vehicle | null> {
+  async getVehicleById(@Arg("id") id: number): Promise<Vehicle | null> {
     const vehicle = await Vehicle.findOne({
       where: { id },
       relations: {

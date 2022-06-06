@@ -9,19 +9,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm"
+import { ParkingType, VehicleSize } from "../graphql/types/ParkingLotTypes"
 import { getRate } from "../utils/rate"
-
-export enum ParkingType {
-  SP = 1,
-  MP = 2,
-  LP = 3,
-}
-
-export enum VehicleSize {
-  S = 1,
-  M = 2,
-  L = 3,
-}
 
 @ObjectType()
 @Entity()
@@ -42,9 +31,21 @@ export class ParkingLot extends BaseEntity {
   })
   entryPoints!: EntryPoint[]
 
+  @Field(() => [Vehicle], { nullable: true })
+  @OneToMany(() => Vehicle, (vehicle) => vehicle.lastParkingLot, {
+    nullable: true,
+    cascade: true,
+  })
+  vehicleLastParked?: Vehicle[] | null
+
   @Field(() => Number)
   @Column("integer")
   entryPointsCount!: number
+
+  @Field(() => Number)
+  parkingSlotsCount(): number {
+    return this.parkingSlots.length
+  }
 }
 
 @ObjectType()
@@ -71,6 +72,12 @@ export class EntryPoint extends BaseEntity {
     }
   )
   parkingSlotDistances!: EntryPointToParkingSlotDistance[]
+
+  @Field(() => [Vehicle])
+  @OneToMany(() => Vehicle, (vehicle) => vehicle.lastEntryPoint, {
+    cascade: true,
+  })
+  vehicle!: Vehicle[]
 }
 
 @ObjectType()
@@ -98,27 +105,59 @@ export class Vehicle extends BaseEntity {
 
   @Field(() => Date, { nullable: true })
   @Column({ type: "timestamptz", nullable: true })
+  lastCheckInTime?: Date | null
+
+  @Field(() => Date, { nullable: true })
+  @Column({ type: "timestamptz", nullable: true })
   checkOutTime?: Date | null
 
   @Field(() => ParkingSlot, { nullable: true })
   @OneToOne(() => ParkingSlot, (parkingSlot) => parkingSlot.vehicle)
   parkingSlot?: Vehicle | null
 
+  @Field(() => EntryPoint, { nullable: true })
+  @ManyToOne(() => EntryPoint, (entryPoint) => entryPoint.vehicle)
+  lastEntryPoint?: EntryPoint | null
+
+  @Field(() => ParkingLot, { nullable: true })
+  @ManyToOne(() => ParkingLot, (parkingLot) => parkingLot.vehicleLastParked, {
+    nullable: true,
+  })
+  lastParkingLot?: ParkingLot | null
+
   @Field(() => Number, { nullable: true })
   @Column({ type: "numeric", nullable: true })
   lastBillPaid?: number
 
-  @Field((type) => Number)
-  async currentBill(checkOutTime?: Date): Promise<number> {
+  @Field(() => Number, { defaultValue: 0 })
+  @Column({ type: "numeric", default: 0 })
+  totalContinuousBill: number = 0
+
+  @Field(() => Boolean, { defaultValue: false })
+  @Column({ type: "boolean", default: false })
+  isContinuousRate: boolean = false
+
+  @Field(() => Number)
+  async totalBill(checkOutTime?: Date): Promise<number> {
     return await getRate({
       _vehicleId: this.id,
       _checkInTime: this.checkInTime,
-      _checkOutTime: this.checkOutTime ? this.checkOutTime : checkOutTime,
+      _checkOutTime: checkOutTime ? checkOutTime : this.checkOutTime,
       // _hours: 25,
     })
   }
 
-  isContinuousRate(newCheckInTime: Date): boolean {
+  // @Field((type) => Number)
+  // async lastEntryPointDistance(checkOutTime?: Date): Promise<number> {
+  //   return await getRate({
+  //     _vehicleId: this.id,
+  //     _checkInTime: this.checkInTime,
+  //     _checkOutTime: this.checkOutTime ? this.checkOutTime : checkOutTime,
+  //     // _hours: 25,
+  //   })
+  // }
+
+  _isContinuousRate(newCheckInTime: Date): boolean {
     if (this.checkOutTime) {
       const reEntryDuration = Math.ceil(
         Math.abs(newCheckInTime.getTime() - this.checkOutTime.getTime()) / 36e5

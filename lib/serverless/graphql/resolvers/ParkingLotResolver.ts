@@ -7,17 +7,21 @@ import {
   Field,
   ObjectType,
 } from "type-graphql"
-import { IsNull, MoreThanOrEqual } from "typeorm"
+import { Equal, IsNull, MoreThanOrEqual } from "typeorm"
 import {
   ParkingLot,
   ParkingSlot,
-  ParkingType,
   EntryPoint,
   EntryPointToParkingSlotDistance,
   Vehicle,
 } from "../../entities/ParkingEntities"
 import { IContext } from "../../utils/types"
-import { ParkArgs, ParkingLotArgs, UnparkArgs } from "../types/ParkingLotTypes"
+import {
+  ParkArgs,
+  ParkingLotArgs,
+  ParkingType,
+  UnparkArgs,
+} from "../types/ParkingLotTypes"
 
 @ObjectType()
 class ParkResponse {
@@ -108,24 +112,52 @@ export class ParkingLotResolver {
     { parkingLotId, entryPointId, plateNumber, size, checkInTime }: ParkArgs
   ): Promise<ParkResponse> {
     // Search for the nearest compatible parking space from entrance
-    const parkingSlot = await ParkingSlot.findOne({
+    let parkingSlot = await ParkingSlot.findOne({
       where: {
         isAvailable: true,
         parkingLot: { id: parkingLotId },
         entryPointDistances: { entryPoint: { id: entryPointId } },
-        type: MoreThanOrEqual(size),
+        type: Equal(size),
       },
-      relations: { vehicle: true, entryPointDistances: { entryPoint: true } },
+      relations: {
+        vehicle: true,
+        entryPointDistances: { entryPoint: true },
+        parkingLot: true,
+      },
       order: {
-        type: "ASC",
         entryPointDistances: { distance: "ASC" },
+        type: "ASC",
       },
     })
+
+    if (!parkingSlot) {
+      parkingSlot = await ParkingSlot.findOne({
+        where: {
+          isAvailable: true,
+          parkingLot: { id: parkingLotId },
+          entryPointDistances: { entryPoint: { id: entryPointId } },
+          type: MoreThanOrEqual(size),
+        },
+        relations: {
+          vehicle: true,
+          entryPointDistances: { entryPoint: true },
+          parkingLot: true,
+        },
+        order: {
+          entryPointDistances: { distance: "ASC" },
+          type: "ASC",
+        },
+      })
+    }
 
     if (parkingSlot) {
       let vehicle = await Vehicle.findOne({
         where: { plateNumber },
-        relations: { parkingSlot: true },
+        relations: { parkingSlot: true, lastParkingLot: true },
+      })
+
+      let entryPoint = await EntryPoint.findOne({
+        where: { id: entryPointId },
       })
 
       if (!vehicle) {
@@ -134,26 +166,61 @@ export class ParkingLotResolver {
           plateNumber,
           size,
           checkInTime: checkInTime ? checkInTime : new Date(),
+          lastCheckInTime: checkInTime ? checkInTime : new Date(),
           parkingSlot,
+          lastEntryPoint: entryPoint,
+          lastParkingLot: parkingSlot.parkingLot,
         }).save()
 
         await ParkingSlot.update({ id: parkingSlot.id }, { isAvailable: false })
       } else {
         if (!vehicle.parkingSlot) {
+          if (parkingLotId !== vehicle?.lastParkingLot?.id) {
+            // If vehicle parked to a new parking lot, reset values of vehicle
+            await Vehicle.update(
+              { id: vehicle.id },
+              {
+                checkInTime: checkInTime ? checkInTime : new Date(),
+                lastCheckInTime: checkInTime ? checkInTime : new Date(),
+                checkOutTime: null,
+                lastEntryPoint: entryPoint,
+                isContinuousRate: false,
+                lastParkingLot: parkingSlot.parkingLot,
+              }
+            )
+            vehicle = await Vehicle.findOneOrFail({
+              where: { plateNumber },
+              relations: { parkingSlot: true, lastParkingLot: true },
+            })
+          }
+
           // If vehicle exists, update existing vehicle's checkInTime depending if the continuous rate applies
-          const newCheckInTime = new Date()
+          const newCheckInTime: Date = new Date()
+          const isContinuousRate: boolean = vehicle._isContinuousRate(
+            checkInTime ? checkInTime : newCheckInTime
+          )
+          const finalCheckInTime: Date | undefined = isContinuousRate
+            ? vehicle.checkInTime
+            : checkInTime
+            ? checkInTime
+            : new Date()
+
+          if (checkInTime && vehicle.checkOutTime) {
+            if (checkInTime < vehicle.checkOutTime) {
+              return {
+                errorMessage:
+                  "Check in time should be later than previous check out time.",
+              }
+            }
+          }
 
           await Vehicle.update(
             { id: vehicle.id },
             {
-              checkInTime: vehicle.isContinuousRate(
-                checkInTime ? checkInTime : newCheckInTime
-              )
-                ? vehicle.checkInTime
-                : checkInTime
-                ? checkInTime
-                : new Date(),
-              checkOutTime: null,
+              checkInTime: finalCheckInTime,
+              lastCheckInTime: checkInTime ? checkInTime : new Date(),
+              lastEntryPoint: entryPoint,
+              isContinuousRate,
             }
           )
           await ParkingSlot.update(
@@ -169,7 +236,7 @@ export class ParkingLotResolver {
 
       vehicle = await Vehicle.findOne({
         where: { id: vehicle.id },
-        relations: { parkingSlot: true },
+        relations: { parkingSlot: true, lastEntryPoint: true },
       })
 
       return { vehicle }
@@ -191,11 +258,32 @@ export class ParkingLotResolver {
     })
 
     if (vehicle) {
-      const currentBill = await vehicle.currentBill(newCheckOutTime)
+      if (newCheckOutTime && vehicle.lastCheckInTime) {
+        if (newCheckOutTime < vehicle.lastCheckInTime) {
+          return {
+            errorMessage:
+              "Check out time should be later than previous check in time.",
+          }
+        }
+      }
+
+      const totalBill = await vehicle.totalBill(newCheckOutTime)
+      const continuousBill = totalBill - vehicle.totalContinuousBill
+      let totalContinuousBill =
+        parseFloat(vehicle.totalContinuousBill.toString()) +
+        parseFloat(continuousBill.toString())
+
+      if (!vehicle.isContinuousRate && vehicle.totalContinuousBill > 0) {
+        totalContinuousBill = 0
+      }
 
       await Vehicle.update(
         { id: vehicle.id },
-        { checkOutTime: newCheckOutTime, lastBillPaid: currentBill }
+        {
+          checkOutTime: newCheckOutTime,
+          lastBillPaid: continuousBill,
+          totalContinuousBill,
+        }
       )
       await ParkingSlot.update(
         { id: parkingSlotId },
@@ -207,7 +295,7 @@ export class ParkingLotResolver {
 
     vehicle = await Vehicle.findOne({
       where: { id: vehicle.id },
-      relations: { parkingSlot: true },
+      relations: { parkingSlot: true, lastEntryPoint: true },
     })
 
     return { vehicle }
@@ -218,7 +306,7 @@ export class ParkingLotResolver {
     return await ParkingLot.find({
       relations: {
         parkingSlots: {
-          vehicle: true,
+          vehicle: { lastEntryPoint: true },
           entryPointDistances: { entryPoint: true },
         },
       },
@@ -230,9 +318,24 @@ export class ParkingLotResolver {
     const parkingLot = await ParkingLot.findOne({
       where: { id },
       relations: {
-        parkingSlots: { entryPointDistances: { entryPoint: true } },
+        entryPoints: true,
+        parkingSlots: {
+          vehicle: { lastEntryPoint: true },
+          entryPointDistances: { entryPoint: true },
+        },
       },
     })
     return parkingLot
+  }
+
+  @Query(() => [EntryPoint], { nullable: true })
+  async getEntryPointsById(
+    @Arg("id") id: number
+  ): Promise<EntryPoint[] | null> {
+    const entryPoints = await EntryPoint.find({
+      where: { parkingLot: { id } },
+    })
+
+    return entryPoints
   }
 }

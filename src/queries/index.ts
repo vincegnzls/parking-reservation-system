@@ -15,14 +15,21 @@ export const GET_PARKING_LOTS = gql`
     getParkingLots {
       id
       entryPointsCount
+      parkingSlotsCount
+    }
+  }
+`
+
+export const GET_PARKING_LOT_BY_ID = gql`
+  query GetParkingLotById($getParkingLotByIdId: Float!) {
+    getParkingLotById(id: $getParkingLotByIdId) {
+      id
       parkingSlots {
-        type
         id
+        type
         entryPointDistances {
           distance
-          id
           entryPoint {
-            id
             name
           }
         }
@@ -31,11 +38,27 @@ export const GET_PARKING_LOTS = gql`
           plateNumber
           size
           checkInTime
+          lastCheckInTime
           checkOutTime
-          currentBill
-          lastBillPaid
+          lastEntryPoint {
+            id
+            name
+          }
+          lastCheckInTime
         }
       }
+      entryPoints {
+        name
+      }
+    }
+  }
+`
+
+export const GET_ENTRY_POINTS_BY_ID = gql`
+  query GetEntryPointsById($id: Float!) {
+    getEntryPointsById(id: $id) {
+      id
+      name
     }
   }
 `

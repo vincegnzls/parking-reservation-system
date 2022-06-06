@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client"
 import {
   useDisclosure,
   Button,
@@ -16,13 +17,24 @@ import {
   Text,
   Box,
   Flex,
+  Input,
 } from "@chakra-ui/react"
+import { Form, Formik } from "formik"
+import router from "next/router"
 import React from "react"
+import { CREATE_PARKING_LOT } from "../mutations"
 
-interface AddParkingLotModalProps {}
+interface AddParkingLotModalProps {
+  fetchParkingLots?: () => Promise<void>
+}
 
-const AddParkingLotModal: React.FC<AddParkingLotModalProps> = ({}) => {
+const AddParkingLotModal: React.FC<AddParkingLotModalProps> = ({
+  fetchParkingLots,
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [createParkingLot, { data, loading, error }] =
+    useMutation(CREATE_PARKING_LOT)
+
   return (
     <>
       <Button
@@ -38,61 +50,154 @@ const AddParkingLotModal: React.FC<AddParkingLotModalProps> = ({}) => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add Parking Slot</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Box>
-              <Text>Small Count:</Text>
-              <NumberInput defaultValue={1} min={1} max={20}>
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </Box>
-            <Box mt={2}>
-              <Text>Medium Count:</Text>
-              <NumberInput defaultValue={1} min={1} max={20}>
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </Box>
-            <Box mt={2}>
-              <Text>Large Count:</Text>
-              <NumberInput defaultValue={1} min={1} max={20}>
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </Box>
-            <Box mt={2}>
-              <Text>Number of Entry Points:</Text>
-              <NumberInput defaultValue={3} min={3} max={10}>
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </Box>
-          </ModalBody>
+          <Formik
+            initialValues={{
+              sCount: 1,
+              mCount: 1,
+              lCount: 1,
+              entryPointsCount: 3,
+            }}
+            onSubmit={async (values, { setErrors, resetForm }) => {
+              console.log("values", values)
 
-          <ModalFooter>
-            <Flex justifyContent="space-between" w="100%">
-              <Button _hover={{ opacity: 0.8 }} bg="#37b47e" color="white">
-                Save
-              </Button>
-              <Button colorScheme="blue" mr={3} onClick={onClose}>
-                Close
-              </Button>
-            </Flex>
-          </ModalFooter>
+              const { data, errors } = await createParkingLot({
+                variables: { args: values },
+              })
+
+              console.log("CREATE_PARKING_LOT", data, errors)
+
+              if (fetchParkingLots) {
+                await fetchParkingLots()
+              }
+
+              onClose()
+            }}
+          >
+            {({ values, handleChange, isSubmitting, errors }) => (
+              <Form>
+                <ModalHeader>Add Parking Slot</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <Box>
+                    <Text>Small Count:</Text>
+                    <Input
+                      min={1}
+                      max={20}
+                      type="number"
+                      name="sCount"
+                      value={values.sCount}
+                      onChange={handleChange}
+                    />
+                    {/* <NumberInput
+                      // defaultValue={1}
+                      min={1}
+                      max={20}
+                      id="sCount"
+                      name="sCount"
+                      value={values.sCount}
+                      onChange={handleChange}
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput> */}
+                  </Box>
+                  <Box mt={2}>
+                    <Text>Medium Count:</Text>
+                    <Input
+                      min={1}
+                      max={20}
+                      type="number"
+                      name="mCount"
+                      value={values.mCount}
+                      onChange={handleChange}
+                    />
+                    {/* <NumberInput
+                      min={1}
+                      max={20}
+                      name="mCount"
+                      value={values.mCount}
+                    >
+                      <NumberInputField onChange={handleChange} />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput> */}
+                  </Box>
+                  <Box mt={2}>
+                    <Text>Large Count:</Text>
+                    <Input
+                      min={1}
+                      max={20}
+                      type="number"
+                      name="lCount"
+                      value={values.lCount}
+                      onChange={handleChange}
+                    />
+                    {/* <NumberInput
+                      // defaultValue={1}
+                      min={1}
+                      max={20}
+                      name="lCount"
+                      value={values.lCount}
+                      onChange={handleChange}
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput> */}
+                  </Box>
+                  <Box mt={2}>
+                    <Text>Number of Entry Points:</Text>
+                    <Input
+                      min={3}
+                      max={10}
+                      type="number"
+                      name="entryPointsCount"
+                      value={values.entryPointsCount}
+                      onChange={handleChange}
+                    />
+                    {/* <NumberInput
+                      // defaultValue={3}
+                      min={3}
+                      max={10}
+                      name="entryPointsCount"
+                      value={values.entryPointsCount}
+                      onChange={handleChange}
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput> */}
+                  </Box>
+                </ModalBody>
+
+                <ModalFooter>
+                  <Flex justifyContent="space-between" w="100%">
+                    <Button
+                      type="submit"
+                      _hover={{ opacity: 0.8 }}
+                      bg="#37b47e"
+                      color="white"
+                      isLoading={isSubmitting}
+                    >
+                      Save
+                    </Button>
+                    <Button colorScheme="blue" onClick={onClose}>
+                      Close
+                    </Button>
+                  </Flex>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
         </ModalContent>
       </Modal>
     </>

@@ -1,9 +1,5 @@
-import {
-  ParkingSlot,
-  ParkingType,
-  Vehicle,
-  VehicleSize,
-} from "../entities/ParkingEntities"
+import { ParkingSlot, Vehicle } from "../entities/ParkingEntities"
+import { ParkingType } from "../graphql/types/ParkingLotTypes"
 
 const FLAT_RATE = 40
 const DAILY_RATE = 5000
@@ -11,8 +7,8 @@ const FLAT_RATE_DURATION = 3
 
 interface RateArgs {
   _vehicleId: number
-  _checkInTime: Date | undefined
-  _checkOutTime: Date | undefined
+  _checkInTime: Date | undefined | null
+  _checkOutTime: Date | undefined | null
   _hours?: number
 }
 
@@ -22,8 +18,8 @@ export const getRate = async ({
   _checkOutTime,
   _hours,
 }: RateArgs): Promise<number> => {
-  const checkInTime: Date | undefined = _checkInTime
-  let checkOutTime: Date | undefined = _checkOutTime
+  const checkInTime = _checkInTime
+  let checkOutTime = _checkOutTime
 
   if (!checkOutTime) {
     checkOutTime = new Date()

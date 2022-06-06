@@ -1,76 +1,71 @@
-import { useQuery } from "@apollo/client"
+import { useLazyQuery, useQuery } from "@apollo/client"
 import {
-  Box,
-  Button,
-  Center,
   Flex,
-  Grid,
-  GridItem,
   SimpleGrid,
-  Stat,
-  StatHelpText,
-  StatLabel,
-  StatNumber,
-  Tag,
-  Text,
   useColorMode,
   Link,
   Heading,
-  Image,
+  Spinner,
 } from "@chakra-ui/react"
 import NextLink from "next/link"
 import type { NextPage } from "next"
-import { Component, useEffect } from "react"
+import { useEffect, useState } from "react"
 import NavBar from "../src/components/NavBar"
 import { GET_PARKING_LOTS, ME } from "../src/queries"
+import client from "../apollo-client"
 
-/*
-<Flex
-  direction={"column"}
-  justifyContent="center"
-  alignItems="center"
-  h="100%"
->
-  <Tag
-    size={"md"}
-    borderRadius="full"
-    variant="solid"
-    colorScheme="blackAlpha"
-  >
-    Slot 2
-  </Tag>
-  <Tag
-    size={"md"}
-    borderRadius="full"
-    variant="solid"
-    colorScheme="blackAlpha"
-    textAlign="center"
-    mt={2}
-  >
-    124XYZ
-  </Tag>
-</Flex>
-*/
+type Props = {
+  data?: any[]
+  error?: string
+}
 
-const Home: NextPage = () => {
-  const { loading, error, data } = useQuery(GET_PARKING_LOTS)
+const Home: NextPage = (props: Props) => {
+  const { loading, error, data, refetch } = useQuery(GET_PARKING_LOTS)
+  const [parkingLots, setParkingLots] = useState<any[]>([])
   const { colorMode, toggleColorMode } = useColorMode()
 
+  // useEffect(() => {
+  //   if (props.data && props.data?.length) {
+  //     setParkingLots(props.data)
+  //     console.log(props.data)
+  //   }
+  // }, [props.data])
+
   useEffect(() => {
-    console.log("GET_PARKING_LOTS QUERY", data)
-  }, [data])
+    refetch()
+  }, [])
+
+  useEffect(() => {
+    if (data) {
+      setParkingLots(data.getParkingLots)
+    }
+  }, [data, error])
 
   const renderParkingLots = (): React.ReactNode => {
-    //textAlign="left" mt={10}
     return (
-      // <Flex direction="column" alignItems="flex-start" textAlign="left" mt={10}>
-      <SimpleGrid minChildWidth={"50px"} spacing="20px" mt={10}>
-        {loading
-          ? null
-          : data.getParkingLots.map((parkingLot: any, index: number) => {
+      <Flex>
+        <SimpleGrid
+          spacing={{ base: "60px", md: "35px", lg: "30px" }}
+          columns={6}
+          mt={10}
+        >
+          {loading ? (
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+              size="xl"
+            />
+          ) : (
+            parkingLots.map((parkingLot: any, index: number) => {
               return (
-                <>
-                  <NextLink key={index} href="/parking-lot">
+                <Flex>
+                  <NextLink
+                    key={index}
+                    href="/parking-lot/[id]"
+                    as={`/parking-lot/${parkingLot.id}`}
+                  >
                     <Link
                       mr={2}
                       mb={3}
@@ -85,24 +80,28 @@ const Home: NextPage = () => {
                         <Heading size="md">Parking Lot {parkingLot.id}</Heading>
                         <p>No. of Entries: {parkingLot.entryPointsCount}</p>
                         <p>
-                          No. of Parking Spaces:{" "}
-                          {parkingLot.parkingSlots.length}
+                          No. of Parking Spaces: {parkingLot.parkingSlotsCount}
                         </p>
                       </Flex>
                     </Link>
                   </NextLink>
-                </>
+                </Flex>
               )
-            })}
-      </SimpleGrid>
-      // </Flex>
+            })
+          )}
+        </SimpleGrid>
+      </Flex>
     )
+  }
+
+  const fetchParkingLots = async () => {
+    await refetch()
   }
 
   return (
     <>
-      <NavBar />
-      <Flex direction="column" px={36}>
+      <NavBar fetchParkingLots={fetchParkingLots} />
+      <Flex direction="column" px={{ base: 12, md: 24, lg: 36 }}>
         <Heading>Parking Lots</Heading>
         {renderParkingLots()}
       </Flex>
@@ -140,5 +139,20 @@ const Home: NextPage = () => {
     </>
   )
 }
+
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//   const { error, data } = await client.query({
+//     query: GET_PARKING_LOTS,
+//   })
+
+//   console.log(data)
+
+//   return {
+//     props: {
+//       data: data.getParkingLots,
+//       error: error ? error.message : null,
+//     },
+//   }
+// }
 
 export default Home

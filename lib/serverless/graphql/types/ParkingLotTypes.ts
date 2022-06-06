@@ -1,5 +1,4 @@
 import { Field, InputType } from "type-graphql"
-import { VehicleSize } from "../../entities/ParkingEntities"
 
 @InputType()
 export class ParkingLotArgs {
@@ -33,4 +32,16 @@ export class UnparkArgs {
   parkingSlotId!: number
   @Field({ nullable: true })
   checkOutTime?: Date
+}
+
+export enum ParkingType {
+  SP = 1,
+  MP = 2,
+  LP = 3,
+}
+
+export enum VehicleSize {
+  S = 1,
+  M = 2,
+  L = 3,
 }

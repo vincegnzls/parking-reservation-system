@@ -1,28 +1,23 @@
-import { Flex, Box, Button } from "@chakra-ui/react"
+import { Flex } from "@chakra-ui/react"
 import React from "react"
-import AddParkingLotModal from "./AddParkingLotModal"
+import NavBarContent from "./NavBarContent"
 
-interface NavBarProps {}
-
-const NavBar: React.FC<NavBarProps> = ({}) => {
+const NavBar: React.FC<any> = ({
+  fetchParkingLots,
+  fetchParkingSlots,
+  router,
+}) => {
   return (
-    <Flex width="100%" py={16} px={36}>
-      <Box ml="auto">
-        {/* <Button _hover={{ opacity: 0.8 }} bg="#37b47e" color="white" size="lg">
-          Add Parking Lot
-        </Button> */}
-        <AddParkingLotModal />
-        <Button
-          _hover={{ opacity: 0.8 }}
-          bg="#37b47e"
-          color="white"
-          size="lg"
-          ml={3}
-          //   onClick={onOpen}
-        >
-          Park a Car
-        </Button>
-      </Box>
+    <Flex
+      justifyContent="space-between"
+      width="100%"
+      py={14}
+      px={{ base: 12, md: 24, lg: 36 }}
+    >
+      <NavBarContent
+        fetchParkingLots={fetchParkingLots}
+        fetchParkingSlots={fetchParkingSlots}
+      />
     </Flex>
   )
 }
