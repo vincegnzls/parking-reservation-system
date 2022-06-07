@@ -1,9 +1,13 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client"
 
-const URI =
-  process.env.NODE_ENV === "development"
-    ? process.env.NEXT_PUBLIC_GRAPHQL_URL
-    : `${process.env.VERCEL_URL}/api/graphql`
+let URI = process.env.NEXT_PUBLIC_GRAPHQL_URL
+
+if (
+  process.env.NEXT_PUBLIC_VERCEL_URL &&
+  process.env.NEXT_PUBLIC_VERCEL_URL.length
+) {
+  URI = `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/graphql`
+}
 
 const client = new ApolloClient({
   uri: URI,
