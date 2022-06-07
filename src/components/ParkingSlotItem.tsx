@@ -1,6 +1,5 @@
 import { Box, Button, Flex, Heading, Tag, Text } from "@chakra-ui/react"
 import moment from "moment"
-import NextLink from "next/link"
 import { VehicleSize } from "../types"
 
 const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {

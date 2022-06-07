@@ -1,3 +1,4 @@
+import React from "react"
 import { useMutation } from "@apollo/client"
 import {
   useDisclosure,
@@ -15,7 +16,6 @@ import {
   Input,
 } from "@chakra-ui/react"
 import { Form, Formik } from "formik"
-import React from "react"
 import { CREATE_PARKING_LOT } from "../mutations"
 
 interface AddParkingLotModalProps {
@@ -26,8 +26,7 @@ const AddParkingLotModal: React.FC<AddParkingLotModalProps> = ({
   fetchParkingLots,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [createParkingLot, { data, loading, error }] =
-    useMutation(CREATE_PARKING_LOT)
+  const [createParkingLot] = useMutation(CREATE_PARKING_LOT)
 
   return (
     <>
@@ -51,14 +50,10 @@ const AddParkingLotModal: React.FC<AddParkingLotModalProps> = ({
               lCount: 1,
               entryPointsCount: 3,
             }}
-            onSubmit={async (values, { setErrors, resetForm }) => {
-              console.log("values", values)
-
+            onSubmit={async (values) => {
               const { data, errors } = await createParkingLot({
                 variables: { args: values },
               })
-
-              console.log("CREATE_PARKING_LOT", data, errors)
 
               if (fetchParkingLots) {
                 await fetchParkingLots()

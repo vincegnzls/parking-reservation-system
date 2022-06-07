@@ -3,7 +3,7 @@
     "experimentalDecorators": true,
     "target": "es2018",
     "lib": ["dom", "dom.iterable", "esnext", "esnext.asynciterable"],
-    "emitDecoratorMetadata": true,
+    // "emitDecoratorMetadata": true,
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

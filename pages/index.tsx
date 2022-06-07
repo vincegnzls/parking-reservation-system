@@ -33,7 +33,7 @@ const Home: NextPage = (props: Props) => {
     <>
       <NavBar fetchParkingLots={fetchParkingLots} />
       <Flex direction="column" px={{ base: 12, md: 24, lg: 36 }} pb={14}>
-        <Heading size="md">Parking Lots</Heading>
+        <Heading size="lg">Parking Lots</Heading>
         <ParkingLotList loading={loading} parkingLots={parkingLots} />
       </Flex>
     </>
