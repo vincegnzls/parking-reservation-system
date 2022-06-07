@@ -329,7 +329,10 @@ export class ParkingLotResolver {
         },
       },
       order: {
-        parkingSlots: { id: "ASC" },
+        parkingSlots: {
+          id: "ASC",
+          entryPointDistances: { entryPoint: { name: "ASC" } },
+        },
       },
     })
     return parkingLot

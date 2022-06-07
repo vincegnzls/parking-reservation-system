@@ -41,11 +41,12 @@ const apolloServer = new ApolloServer({
       // redis,
     }
   },
-  plugins: [
-    ApolloServerLoaderPlugin({
-      typeormGetConnection: getConnection, // for use with TypeORM
-    }),
-  ],
+  introspection: true,
+  // plugins: [
+  //   ApolloServerLoaderPlugin({
+  //     typeormGetConnection: getConnection, // for use with TypeORM
+  //   }),
+  // ],
 })
 
 await apolloServer.start()
