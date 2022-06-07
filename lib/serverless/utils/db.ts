@@ -7,8 +7,6 @@ import {
   ParkingSlot,
 } from "../entities/ParkingEntities"
 
-import { User } from "../entities/User"
-
 export const AppDataSource = new DataSource({
   type: "postgres",
   host: process.env.DB_HOST,
@@ -18,7 +16,6 @@ export const AppDataSource = new DataSource({
   port: 5432,
   entities: [
     EntryPoint,
-    User,
     Vehicle,
     ParkingLot,
     ParkingSlot,
