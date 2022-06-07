@@ -16,6 +16,7 @@ export const GET_PARKING_LOTS = gql`
       id
       entryPointsCount
       parkingSlotsCount
+      availableSlots
     }
   }
 `

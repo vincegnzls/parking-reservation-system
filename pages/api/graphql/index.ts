@@ -4,13 +4,10 @@ import { ApolloServer } from "apollo-server-micro"
 import Cors from "micro-cors"
 import type { PageConfig } from "next"
 import { buildSchema } from "type-graphql"
-import { getConnection } from "typeorm"
 import Redis from "ioredis"
 
 import { AppDataSource } from "../../../lib/serverless/utils/db"
-import { UserResolver } from "../../../lib/serverless/graphql/resolvers/UserResolver"
 import { ParkingLotResolver } from "../../../lib/serverless/graphql/resolvers/ParkingLotResolver"
-import { ApolloServerLoaderPlugin } from "type-graphql-dataloader"
 import { VehicleResolver } from "../../../lib/serverless/graphql/resolvers/VehicleResolver"
 
 const cors = Cors()

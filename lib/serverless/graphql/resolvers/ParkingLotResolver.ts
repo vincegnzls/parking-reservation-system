@@ -7,7 +7,7 @@ import {
   Field,
   ObjectType,
 } from "type-graphql"
-import { Equal, IsNull, MoreThanOrEqual } from "typeorm"
+import { Equal, MoreThanOrEqual } from "typeorm"
 import {
   ParkingLot,
   ParkingSlot,

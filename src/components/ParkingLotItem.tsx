@@ -7,7 +7,7 @@ const ParkingLotItem: React.FC<any> = ({ index, parkingLot }) => {
       mr={2}
       mb={3}
       shadow="md"
-      bg="#37b47e"
+      bg={parkingLot.availableSlots > 0 ? "#37b47e" : "tomato"}
       color="white"
       px={10}
       py={4}
@@ -27,6 +27,9 @@ const ParkingLotItem: React.FC<any> = ({ index, parkingLot }) => {
           <Heading size="md">Parking Lot {parkingLot.id}</Heading>
           <Text mt={2}>
             Entry Count: <b>{parkingLot.entryPointsCount}</b>
+          </Text>
+          <Text>
+            Available Slots: <b>{parkingLot.availableSlots}</b>
           </Text>
           <Text>
             Total Slots: <b>{parkingLot.parkingSlotsCount}</b>

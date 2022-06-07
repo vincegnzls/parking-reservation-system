@@ -46,6 +46,14 @@ export class ParkingLot extends BaseEntity {
   parkingSlotsCount(): number {
     return this.parkingSlots.length
   }
+
+  @Field(() => Number)
+  availableSlots(): number {
+    const parkingSlots = this.parkingSlots.filter(
+      (parkingSlot) => parkingSlot.isAvailable
+    )
+    return parkingSlots.length
+  }
 }
 
 @ObjectType()
