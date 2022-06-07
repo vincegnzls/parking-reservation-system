@@ -91,6 +91,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { error, data } = await client.query({
     query: GET_PARKING_LOT_BY_ID,
     variables: { getParkingLotByIdId: parseInt(id) },
+    fetchPolicy: "no-cache",
   })
 
   if (!data.getParkingLotById) {

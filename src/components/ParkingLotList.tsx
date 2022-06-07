@@ -1,4 +1,4 @@
-import { Flex, SimpleGrid, Spinner } from "@chakra-ui/react"
+import { Heading, SimpleGrid, Spinner } from "@chakra-ui/react"
 import React from "react"
 import ParkingLotItem from "./ParkingLotItem"
 
@@ -13,10 +13,14 @@ const ParkingLotList: React.FC<any> = ({ loading, parkingLots }) => {
           color="blue.500"
           size="xl"
         />
-      ) : (
+      ) : parkingLots.length ? (
         parkingLots.map((parkingLot: any, index: number) => {
           return <ParkingLotItem index={index} parkingLot={parkingLot} />
         })
+      ) : (
+        <Heading size="lg" opacity={0.7}>
+          {"<"}There are no parking lots yet. {">"}
+        </Heading>
       )}
     </SimpleGrid>
   )
