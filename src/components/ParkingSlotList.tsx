@@ -8,7 +8,7 @@ const ParkingSlotList: React.FC<any> = ({ parkingSlots, onUnpark }) => {
       {parkingSlots.map((parkingSlot: any, idx: number) => {
         return (
           <ParkingSlotItem
-            idx={idx}
+            key={idx}
             parkingSlot={parkingSlot}
             onUnpark={onUnpark}
           />

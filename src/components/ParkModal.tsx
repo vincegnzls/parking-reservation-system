@@ -47,7 +47,6 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
   const [carSize, setCarSize] = useState<string>("")
 
   useEffect(() => {
-    console.log(data)
     if (data?.getVehicleByPlateNumber) {
       if (data?.getVehicleByPlateNumber.checkOutTime) {
         setCheckInTime(new Date(data?.getVehicleByPlateNumber.checkOutTime))
@@ -100,7 +99,9 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
     } else {
       toast({
         title: "Parking Success",
-        description: `Vehicle successfully been parked to the nearest entrance! ${
+        description: `Vehicle with plate number ${
+          data?.park?.vehicle?.plateNumber
+        } has been successfully parked to the nearest entrance! ${
           data?.park?.vehicle?.isContinuousRate
             ? "Continuous rate has been applied."
             : ""
@@ -121,7 +122,6 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
 
   const onPlateNumberChange = async (e: any, handleChange: any) => {
     handleChange(e)
-    console.log(e.target.value)
     await getVehicle({ variables: { plateNumber: e.target.value } })
   }
 

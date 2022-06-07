@@ -13,9 +13,9 @@ const ParkingLotList: React.FC<any> = ({ loading, parkingLots }) => {
           color="blue.500"
           size="xl"
         />
-      ) : parkingLots.length ? (
+      ) : parkingLots && parkingLots.length ? (
         parkingLots.map((parkingLot: any, index: number) => {
-          return <ParkingLotItem index={index} parkingLot={parkingLot} />
+          return <ParkingLotItem key={index} parkingLot={parkingLot} />
         })
       ) : (
         <Heading size="lg" opacity={0.7}>

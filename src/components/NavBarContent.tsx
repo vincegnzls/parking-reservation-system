@@ -17,10 +17,12 @@ const NavBarContent: React.FC<any> = ({
 
     if (router.pathname === "/") {
       navButtons.push(
-        <AddParkingLotModal fetchParkingLots={fetchParkingLots} />
+        <AddParkingLotModal fetchParkingLots={fetchParkingLots} key={0} />
       )
     } else if (router.pathname.includes("parking-lot")) {
-      navButtons.push(<ParkModal fetchParkingSlots={fetchParkingSlots} />)
+      navButtons.push(
+        <ParkModal fetchParkingSlots={fetchParkingSlots} key={1} />
+      )
     }
 
     navButtons.push(
@@ -29,6 +31,7 @@ const NavBarContent: React.FC<any> = ({
         size="md"
         ml={2}
         mt={{ base: 2, lg: 0 }}
+        key={2}
       >
         {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
       </Button>
