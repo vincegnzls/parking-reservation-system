@@ -6,7 +6,7 @@ if (
   process.env.NEXT_PUBLIC_VERCEL_URL &&
   process.env.NEXT_PUBLIC_VERCEL_URL.length
 ) {
-  URI = `/api/graphql`
+  URI = `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/graphql`
 }
 
 const client = new ApolloClient({
