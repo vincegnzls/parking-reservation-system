@@ -143,7 +143,6 @@ export class Vehicle extends BaseEntity {
       _vehicleId: this.id,
       _checkInTime: this.checkInTime,
       _checkOutTime: checkOutTime ? checkOutTime : this.checkOutTime,
-      // _hours: 25,
     })
   }
 
@@ -162,11 +161,6 @@ export class Vehicle extends BaseEntity {
       const reEntryDuration = Math.ceil(
         Math.abs(newCheckInTime.getTime() - this.checkOutTime.getTime()) / 36e5
       )
-
-      console.log(
-        Math.abs(newCheckInTime.getTime() - this.checkOutTime.getTime()) / 36e5
-      )
-      console.log("reEntryDuration", reEntryDuration)
 
       return reEntryDuration <= 1
     }

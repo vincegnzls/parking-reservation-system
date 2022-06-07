@@ -37,8 +37,6 @@ export const getRate = async ({
             Math.abs(checkOutTime.getTime() - checkInTime.getTime()) / 36e5
           )
 
-      console.log("hoursParked", hoursParked, checkInTime, checkOutTime)
-
       if (hoursParked > FLAT_RATE_DURATION) {
         const dailyCount = Math.floor(hoursParked / 24)
         let remainingHours

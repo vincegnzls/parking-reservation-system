@@ -7,7 +7,6 @@ import { buildSchema } from "type-graphql"
 import { getConnection } from "typeorm"
 import Redis from "ioredis"
 
-import { HelloWorldResolver } from "../../../lib/serverless/graphql/resolvers/HelloWorldResolver"
 import { AppDataSource } from "../../../lib/serverless/utils/db"
 import { UserResolver } from "../../../lib/serverless/graphql/resolvers/UserResolver"
 import { ParkingLotResolver } from "../../../lib/serverless/graphql/resolvers/ParkingLotResolver"
@@ -28,7 +27,7 @@ export const config: PageConfig = {
 
 const apolloServer = new ApolloServer({
   schema: await buildSchema({
-    resolvers: [HelloWorldResolver, ParkingLotResolver, VehicleResolver],
+    resolvers: [ParkingLotResolver, VehicleResolver],
   }),
   context: async ({ req, res }) => {
     try {
@@ -42,11 +41,6 @@ const apolloServer = new ApolloServer({
     }
   },
   introspection: true,
-  // plugins: [
-  //   ApolloServerLoaderPlugin({
-  //     typeormGetConnection: getConnection, // for use with TypeORM
-  //   }),
-  // ],
 })
 
 await apolloServer.start()

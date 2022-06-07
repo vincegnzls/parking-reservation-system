@@ -40,9 +40,7 @@ const NavBarContent: React.FC<any> = ({
   return (
     <>
       <Box>
-        <Heading letterSpacing={2} size="lg">
-          park it!
-        </Heading>
+        <Heading size="lg">oo parking!</Heading>
       </Box>
       <Flex direction={{ base: "column", lg: "row" }}>
         {renderNavButtons()}
