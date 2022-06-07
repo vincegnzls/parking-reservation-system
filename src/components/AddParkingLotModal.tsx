@@ -35,7 +35,7 @@ const AddParkingLotModal: React.FC<AddParkingLotModalProps> = ({
         _hover={{ opacity: 0.8 }}
         bg="#37b47e"
         color="white"
-        size="lg"
+        size="md"
         onClick={onOpen}
       >
         Add Parking Lot
@@ -69,7 +69,7 @@ const AddParkingLotModal: React.FC<AddParkingLotModalProps> = ({
           >
             {({ values, handleChange, isSubmitting, errors }) => (
               <Form>
-                <ModalHeader>Add Parking Slot</ModalHeader>
+                <ModalHeader>Add Parking Lot</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                   <Box>

@@ -15,7 +15,6 @@ import {
   Alert,
   AlertIcon,
   useToast,
-  Input,
 } from "@chakra-ui/react"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
@@ -23,6 +22,8 @@ import { Form, Formik } from "formik"
 import { useRouter, withRouter } from "next/router"
 import { UNPARK } from "../mutations"
 import CustomDateInput from "./CustomDateInput"
+import moment from "moment"
+import { currencyFormat } from "../utils"
 
 const UnparkModal: React.FC<any> = ({
   fetchParkingSlots,
@@ -57,8 +58,6 @@ const UnparkModal: React.FC<any> = ({
       },
     })
 
-    console.log("PARK RESPONSE", data, errors)
-
     if (data.unpark.errorMessage) {
       setErrorMessage(data.unpark.errorMessage)
     } else {
@@ -66,8 +65,8 @@ const UnparkModal: React.FC<any> = ({
         title: "Checkout Success",
         description: `Vehicle with plate number ${
           data.unpark.vehicle.plateNumber
-        } has successfully been checked out! Total fee paid is P${data.unpark.vehicle.lastBillPaid.toFixed(
-          2
+        } has successfully been checked out! Total fee paid is P${currencyFormat(
+          data.unpark.vehicle.lastBillPaid
         )}.`,
         status: "success",
         duration: 9000,
@@ -95,15 +94,25 @@ const UnparkModal: React.FC<any> = ({
                 <ModalCloseButton />
                 <ModalBody>
                   <Box mt={2}>
-                    <Text>Plate Number: {parkingSlot.vehicle.plateNumber}</Text>
-                    <Text>Check Out Time:</Text>
+                    <Text mb={1}>
+                      Plate Number: <b>{parkingSlot.vehicle.plateNumber}</b>
+                    </Text>
+                    <Text mb={1}>
+                      Last Check In Time:{" "}
+                      <b>
+                        {moment(parkingSlot.vehicle.lastCheckInTime).format(
+                          "MMM D, YYYY, h:mm A"
+                        )}
+                      </b>
+                    </Text>
+                    <Text mb={1}>Check Out Time:</Text>
                     <DatePicker
                       name="checkOutTime"
                       required
                       selected={checkOutTime}
                       onChange={(date) => setCheckOutTime(date)}
                       showTimeSelect
-                      dateFormat="Pp"
+                      dateFormat="MMM d, yyyy h:mm aa"
                       timeIntervals={1}
                       customInput={<CustomDateInput />}
                     />

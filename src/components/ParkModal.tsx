@@ -131,7 +131,7 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
         _hover={{ opacity: 0.8 }}
         bg="#37b47e"
         color="white"
-        size="lg"
+        size="md"
         onClick={onOpen}
       >
         Park

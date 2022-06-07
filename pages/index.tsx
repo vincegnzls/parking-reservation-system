@@ -1,10 +1,10 @@
 import { useQuery } from "@apollo/client"
-import { Flex, SimpleGrid, Link, Heading, Spinner } from "@chakra-ui/react"
-import NextLink from "next/link"
+import { Flex, Heading } from "@chakra-ui/react"
 import type { NextPage } from "next"
 import { useEffect, useState } from "react"
 import NavBar from "../src/components/NavBar"
-import { GET_PARKING_LOTS, ME } from "../src/queries"
+import { GET_PARKING_LOTS } from "../src/queries"
+import ParkingLotList from "../src/components/ParkingLotList"
 
 type Props = {
   data?: any[]
@@ -25,59 +25,6 @@ const Home: NextPage = (props: Props) => {
     }
   }, [data, error])
 
-  const renderParkingLots = (): React.ReactNode => {
-    return (
-      <Flex>
-        <SimpleGrid
-          spacing={{ base: "60px", md: "35px", lg: "30px" }}
-          columns={6}
-          mt={10}
-        >
-          {loading ? (
-            <Spinner
-              thickness="4px"
-              speed="0.65s"
-              emptyColor="gray.200"
-              color="blue.500"
-              size="xl"
-            />
-          ) : (
-            parkingLots.map((parkingLot: any, index: number) => {
-              return (
-                <Flex>
-                  <NextLink
-                    key={index}
-                    href="/parking-lot/[id]"
-                    as={`/parking-lot/${parkingLot.id}`}
-                  >
-                    <Link
-                      mr={2}
-                      mb={3}
-                      shadow="md"
-                      bg="#37b47e"
-                      color="white"
-                      px={10}
-                      py={4}
-                      borderRadius={12}
-                    >
-                      <Flex direction="column">
-                        <Heading size="md">Parking Lot {parkingLot.id}</Heading>
-                        <p>No. of Entries: {parkingLot.entryPointsCount}</p>
-                        <p>
-                          No. of Parking Spaces: {parkingLot.parkingSlotsCount}
-                        </p>
-                      </Flex>
-                    </Link>
-                  </NextLink>
-                </Flex>
-              )
-            })
-          )}
-        </SimpleGrid>
-      </Flex>
-    )
-  }
-
   const fetchParkingLots = async () => {
     await refetch()
   }
@@ -85,9 +32,9 @@ const Home: NextPage = (props: Props) => {
   return (
     <>
       <NavBar fetchParkingLots={fetchParkingLots} />
-      <Flex direction="column" px={{ base: 12, md: 24, lg: 36 }}>
-        <Heading>Parking Lots</Heading>
-        {renderParkingLots()}
+      <Flex direction="column" px={{ base: 12, md: 24, lg: 36 }} pb={14}>
+        <Heading size="md">Parking Lots</Heading>
+        <ParkingLotList loading={loading} parkingLots={parkingLots} />
       </Flex>
     </>
   )
