@@ -1,4 +1,4 @@
-import { ParkingSlot, Vehicle } from "../entities/ParkingEntities"
+import { ParkingSlot } from "../entities/ParkingEntities"
 import { ParkingType } from "../graphql/types/ParkingLotTypes"
 
 const FLAT_RATE = 40
