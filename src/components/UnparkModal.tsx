@@ -151,13 +151,7 @@ const UnparkModal: React.FC<any> = ({
                       name="checkOutTime"
                       required
                       selected={checkOutTime}
-                      minDate={moment(
-                        parkingSlot.vehicle.lastCheckInTime
-                      ).toDate()}
-                      minTime={moment(
-                        parkingSlot.vehicle.lastCheckInTime
-                      ).toDate()}
-                      maxTime={getMaxTime()}
+                      minDate={moment(checkOutTime).toDate()}
                       onChange={(date) => setCheckOutTime(date)}
                       showTimeSelect
                       dateFormat="MMM d, yyyy h:mm aa"

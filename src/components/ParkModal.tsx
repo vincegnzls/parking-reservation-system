@@ -47,6 +47,13 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
   const [carSize, setCarSize] = useState<string>("")
 
   useEffect(() => {
+    if (!isOpen) {
+      setCheckInTime(new Date())
+      setCarSize("")
+    }
+  }, [isOpen])
+
+  useEffect(() => {
     if (data?.getVehicleByPlateNumber) {
       if (data?.getVehicleByPlateNumber.checkOutTime) {
         setCheckInTime(new Date(data?.getVehicleByPlateNumber.checkOutTime))
