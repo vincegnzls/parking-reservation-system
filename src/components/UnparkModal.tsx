@@ -24,6 +24,7 @@ import { UNPARK } from "../mutations"
 import CustomDateInput from "./CustomDateInput"
 import moment from "moment"
 import { currencyFormat } from "../utils"
+import { ParkingType } from "../types"
 
 const UnparkModal: React.FC<any> = ({
   fetchParkingSlots,
@@ -94,6 +95,9 @@ const UnparkModal: React.FC<any> = ({
                 <ModalCloseButton />
                 <ModalBody>
                   <Box mt={2}>
+                    <Text mb={1}>
+                      Slot Type: <b>{ParkingType[parkingSlot.type]}</b>
+                    </Text>
                     <Text mb={1}>
                       Plate Number: <b>{parkingSlot.vehicle.plateNumber}</b>
                     </Text>

@@ -2,7 +2,7 @@ import { GetServerSideProps, NextPage } from "next"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { useQuery } from "@apollo/client"
-import { Flex, Tag, useDisclosure } from "@chakra-ui/react"
+import { Flex, Tag, Text, useDisclosure } from "@chakra-ui/react"
 
 import client from "../../apollo-client"
 import NavBar from "../../src/components/NavBar"
@@ -39,16 +39,17 @@ const ParkingLot: NextPage = () => {
   const renderEntryPoints = () => {
     return entryPoints.map((entryPoint, idx) => (
       <Tag
+        borderRadius={12}
         key={idx}
         size={"lg"}
         bg="green.400"
         mb={10}
         color="white"
-        mr={5}
+        mr={3}
         px={6}
         py={4}
       >
-        {entryPoint.name}
+        <Text textTransform="capitalize">{entryPoint.name.toUpperCase()}</Text>
       </Tag>
     ))
   }
