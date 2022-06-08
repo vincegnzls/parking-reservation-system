@@ -94,7 +94,7 @@ const UnparkModal: React.FC<any> = ({
                 <ModalHeader>Checkout a Car</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                  <Box mt={2}>
+                  <Box>
                     <Text mb={1}>
                       Slot Type: <b>{ParkingType[parkingSlot.type]}</b>
                     </Text>

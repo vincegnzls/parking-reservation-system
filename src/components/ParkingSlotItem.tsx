@@ -15,35 +15,14 @@ import {
   Text,
 } from "@chakra-ui/react"
 import moment from "moment"
-import { VehicleSize } from "../types"
+import { ParkingType, VehicleSize } from "../types"
 import { currencyFormat } from "../utils"
 
 const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
-  const getParkingSlotType = (size: number): string => {
-    switch (size) {
-      case 1:
-        return "SP"
-      case 2:
-        return "MP"
-      case 3:
-        return "LP"
-      default:
-        return "SP"
-    }
-  }
-
-  const getVehicleType = (size: number): string => {
-    const indexOfS = Object.values(VehicleSize).indexOf(
-      size as unknown as VehicleSize
-    )
-    const key = Object.keys(VehicleSize)[indexOfS]
-    return key
-  }
-
   const getParkingSlotName = (parkingSlot: any) => {
-    return `Slot ${parkingSlot.id} (${getParkingSlotType(
-      parkingSlot.type
-    )}) - ${getParkingSlotPlateSize(parkingSlot)}`
+    return `Slot ${parkingSlot.id} (${
+      ParkingType[parkingSlot.type]
+    }) - ${getParkingSlotPlateSize(parkingSlot)}`
   }
 
   const getParkingSlotPlateSize = (parkingSlot: any) => {
@@ -52,9 +31,7 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
     } ${
       parkingSlot.vehicle
         ? parkingSlot.vehicle.size
-          ? "(" +
-            getVehicleType(parkingSlot.vehicle ? parkingSlot.vehicle.size : 0) +
-            ")"
+          ? "(" + VehicleSize[parkingSlot.vehicle.size] + ")"
           : ""
         : ""
     }`
@@ -66,6 +43,27 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
         ? parkingSlot.vehicle.lastEntryPoint.name
         : ""
       : ""
+  }
+
+  const getPlateNumber = (parkingSlot: any) => {
+    return parkingSlot.vehicle ? (
+      parkingSlot.vehicle.plateNumber ? (
+        <Flex direction="row">
+          <Text size="sm">Plate Number:</Text>
+          <Tag
+            size={"md"}
+            borderRadius="full"
+            variant="solid"
+            bg="green.400"
+            textAlign="center"
+            ml={2}
+          >
+            {parkingSlot.vehicle.plateNumber} (
+            {VehicleSize[parkingSlot.vehicle.size]})
+          </Tag>
+        </Flex>
+      ) : null
+    ) : null
   }
 
   const getCheckInTime = (parkingSlot: any) => {
@@ -251,7 +249,9 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
           {parkingSlot.vehicle ? (
             parkingSlot.vehicle.lastEntryPoint ? (
               <Flex direction="column" alignItems="start">
-                <Flex>
+                {getPlateNumber(parkingSlot)}
+
+                <Flex mt={3}>
                   <Text>Last Entry Point:</Text>
                   <Tag
                     size={"md"}
@@ -264,7 +264,6 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
                     {getEntryPoint(parkingSlot)}
                   </Tag>
                 </Flex>
-
                 {getCheckInTime(parkingSlot)}
                 {getCheckOutTime(parkingSlot)}
                 {getLastFeePaid(parkingSlot)}
@@ -311,17 +310,6 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
           {getCheckOutTime(parkingSlot)}
         </Flex>
       </Box>
-      {parkingSlot.vehicle ? (
-        <Button
-          size="sm"
-          colorScheme="teal"
-          variant="outline"
-          mt={2}
-          onClick={() => onUnpark(parkingSlot)}
-        >
-          UNPARK
-        </Button>
-      ) : null}
     </Flex>
   )
 
