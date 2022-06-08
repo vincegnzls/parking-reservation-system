@@ -46,6 +46,10 @@ export const GET_PARKING_LOT_BY_ID = gql`
             name
           }
           lastCheckInTime
+          totalBill
+          lastBillPaid
+          isContinuousRate
+          totalContinuousBill
         }
       }
       entryPoints {
