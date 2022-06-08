@@ -159,8 +159,8 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
                       placeholder="Select Entry Point"
                       name="entryPointId"
                       required
-                      onChange={handleChange}
                       value={values.entryPointId}
+                      onChange={handleChange}
                     >
                       {renderEntryPointOptions()}
                     </Select>
@@ -183,8 +183,8 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
                       placeholder="Select Car Size"
                       name="size"
                       required
-                      onChange={(e) => setCarSize(e.target.value)}
                       value={carSize}
+                      onChange={(e) => setCarSize(e.target.value)}
                     >
                       {renderCarSizeOptions()}
                     </Select>

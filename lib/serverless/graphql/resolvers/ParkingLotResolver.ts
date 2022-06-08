@@ -314,6 +314,9 @@ export class ParkingLotResolver {
           entryPointDistances: { entryPoint: true },
         },
       },
+      order: {
+        id: "ASC",
+      },
     })
   }
 
