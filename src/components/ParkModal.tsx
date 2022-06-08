@@ -198,7 +198,7 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
                       selected={checkInTime}
                       onChange={(date) => setCheckInTime(date)}
                       showTimeSelect
-                      dateFormat="Pp"
+                      dateFormat="MMM d, yyyy h:mm aa"
                       timeIntervals={1}
                       customInput={<CustomDateInput />}
                     />
