@@ -53,12 +53,6 @@ const UnparkModal: React.FC<any> = ({
   }, [parkingSlot])
 
   useEffect(() => {
-    if (data) {
-      console.log(data)
-    }
-  }, [data])
-
-  useEffect(() => {
     if (parkingSlot && parkingSlot.vehicle && checkOutTime) {
       console.log(checkOutTime)
       updateFee()
