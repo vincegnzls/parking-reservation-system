@@ -125,6 +125,13 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
     await getVehicle({ variables: { plateNumber: e.target.value } })
   }
 
+  const getMaxTime = () => {
+    const maxDate = moment().toDate()
+    maxDate.setHours(23)
+    maxDate.setMinutes(59)
+    return maxDate
+  }
+
   return (
     <>
       <Button
@@ -193,7 +200,9 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
                     <Text>Check In Time:</Text>
                     <DatePicker
                       name="checkInTime"
-                      minDate={moment().toDate()}
+                      minDate={checkInTime}
+                      minTime={checkInTime ? checkInTime : moment().toDate()}
+                      maxTime={getMaxTime()}
                       required
                       selected={checkInTime}
                       onChange={(date) => setCheckInTime(date)}

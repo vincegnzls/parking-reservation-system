@@ -113,6 +113,13 @@ const UnparkModal: React.FC<any> = ({
     }
   }
 
+  const getMaxTime = () => {
+    const maxDate = moment().toDate()
+    maxDate.setHours(23)
+    maxDate.setMinutes(59)
+    return maxDate
+  }
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -144,6 +151,13 @@ const UnparkModal: React.FC<any> = ({
                       name="checkOutTime"
                       required
                       selected={checkOutTime}
+                      minDate={moment(
+                        parkingSlot.vehicle.lastCheckInTime
+                      ).toDate()}
+                      minTime={moment(
+                        parkingSlot.vehicle.lastCheckInTime
+                      ).toDate()}
+                      maxTime={getMaxTime()}
                       onChange={(date) => setCheckOutTime(date)}
                       showTimeSelect
                       dateFormat="MMM d, yyyy h:mm aa"

@@ -1,6 +1,14 @@
 import { MoonIcon, SunIcon } from "@chakra-ui/icons"
-import { Box, Heading, Flex, Button, useColorMode } from "@chakra-ui/react"
+import {
+  Box,
+  Heading,
+  Flex,
+  Button,
+  useColorMode,
+  Link,
+} from "@chakra-ui/react"
 import { withRouter } from "next/router"
+import NextLink from "next/link"
 import React from "react"
 import AddParkingLotModal from "./AddParkingLotModal"
 import ParkModal from "./ParkModal"
@@ -43,7 +51,11 @@ const NavBarContent: React.FC<any> = ({
   return (
     <>
       <Box>
-        <Heading size="lg">oo parking!</Heading>
+        <NextLink href="/">
+          <Link _hover={{ fontStyle: "", opacity: 0.7 }} transition="0.4s">
+            <Heading size="lg">oo parking!</Heading>
+          </Link>
+        </NextLink>
       </Box>
       <Flex direction={{ base: "column", lg: "row" }}>
         {renderNavButtons()}
