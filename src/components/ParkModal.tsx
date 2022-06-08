@@ -61,6 +61,9 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
       if (data?.getVehicleByPlateNumber.size) {
         setCarSize(data?.getVehicleByPlateNumber.size)
       }
+    } else {
+      setCheckInTime(new Date())
+      setCarSize("")
     }
   }, [data])
 
@@ -208,8 +211,6 @@ const ParkModal: React.FC<any> = ({ fetchParkingSlots }) => {
                     <DatePicker
                       name="checkInTime"
                       minDate={checkInTime}
-                      minTime={checkInTime ? checkInTime : moment().toDate()}
-                      maxTime={getMaxTime()}
                       required
                       selected={checkInTime}
                       onChange={(date) => setCheckInTime(date)}
