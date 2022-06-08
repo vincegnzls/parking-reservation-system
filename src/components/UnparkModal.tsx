@@ -1,5 +1,5 @@
-import React, { forwardRef, useEffect, useState } from "react"
-import { useMutation } from "@apollo/client"
+import React, { useEffect, useState } from "react"
+import { useLazyQuery, useMutation } from "@apollo/client"
 import {
   Button,
   Modal,
@@ -15,6 +15,7 @@ import {
   Alert,
   AlertIcon,
   useToast,
+  Spinner,
 } from "@chakra-ui/react"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
@@ -25,6 +26,7 @@ import CustomDateInput from "./CustomDateInput"
 import moment from "moment"
 import { currencyFormat } from "../utils"
 import { ParkingType } from "../types"
+import { GET_FEE_TO_PAY } from "../queries"
 
 const UnparkModal: React.FC<any> = ({
   fetchParkingSlots,
@@ -38,6 +40,9 @@ const UnparkModal: React.FC<any> = ({
   const router = useRouter()
   const toast = useToast()
   const [unpark] = useMutation(UNPARK)
+  const [getFee, { loading, error, data }] = useLazyQuery(GET_FEE_TO_PAY, {
+    fetchPolicy: "no-cache",
+  })
   const [checkOutTime, setCheckOutTime] = useState<Date | null>(new Date())
   const [errorMessage, setErrorMessage] = useState<string>("")
 
@@ -46,6 +51,37 @@ const UnparkModal: React.FC<any> = ({
       setCheckOutTime(new Date(parkingSlot.vehicle.lastCheckInTime))
     }
   }, [parkingSlot])
+
+  useEffect(() => {
+    if (data) {
+      console.log(data)
+    }
+  }, [data])
+
+  useEffect(() => {
+    if (parkingSlot && parkingSlot.vehicle && checkOutTime) {
+      console.log(checkOutTime)
+      updateFee()
+    }
+  }, [parkingSlot, checkOutTime])
+
+  const updateFee = async () => {
+    await getFee({
+      variables: { id: parseInt(parkingSlot.vehicle.id), checkOutTime },
+    })
+  }
+
+  const getFeeDisplay = () => {
+    if (loading) {
+      return <Spinner size="sm" />
+    } else {
+      if (data && data.getFeeToPay) {
+        return `P${currencyFormat(data.getFeeToPay)}`
+      }
+    }
+
+    return "P0.00"
+  }
 
   const onSubmit = async (values: any) => {
     setErrorMessage("")
@@ -120,6 +156,9 @@ const UnparkModal: React.FC<any> = ({
                       timeIntervals={1}
                       customInput={<CustomDateInput />}
                     />
+                    <Text mt={1}>
+                      Fee: <b>{getFeeDisplay()}</b>
+                    </Text>
                   </Box>
                   {errorMessage.length ? (
                     <Alert status="error" mt={4}>

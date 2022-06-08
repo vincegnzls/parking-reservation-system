@@ -1,15 +1,5 @@
 import { gql } from "@apollo/client"
 
-export const ME = gql`
-  query Me {
-    me {
-      userId
-      firstName
-      lastName
-      email
-    }
-  }
-`
 export const GET_PARKING_LOTS = gql`
   query GetParkingLots {
     getParkingLots {
@@ -77,5 +67,11 @@ export const GET_VEHICLE_BY_PLATE_NUMBER = gql`
       lastCheckInTime
       checkOutTime
     }
+  }
+`
+
+export const GET_FEE_TO_PAY = gql`
+  query Query($checkOutTime: DateTime!, $id: Float!) {
+    getFeeToPay(checkOutTime: $checkOutTime, id: $id)
   }
 `

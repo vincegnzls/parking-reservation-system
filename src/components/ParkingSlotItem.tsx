@@ -90,7 +90,7 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
     return parkingSlot.vehicle ? (
       parkingSlot.vehicle.isContinuousRate ? (
         <Flex direction="row" mt={3}>
-          <Text size="sm">First Check In Time:</Text>
+          <Text size="sm">1st Check In Time:</Text>
           <Tag
             size={"md"}
             borderRadius="full"
@@ -279,7 +279,7 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
           </Box>
         </Flex>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent width="inherit">
         <PopoverArrow />
         <PopoverCloseButton />
         <PopoverHeader>
