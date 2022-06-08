@@ -71,7 +71,7 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
   const getCheckInTime = (parkingSlot: any) => {
     return parkingSlot.vehicle ? (
       parkingSlot.vehicle.lastCheckInTime ? (
-        <Flex direction="row" mt={4}>
+        <Flex direction="row" mt={3}>
           <Text size="sm">Check In Time:</Text>
           <Tag
             size={"md"}
@@ -93,7 +93,7 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
   const getCheckOutTime = (parkingSlot: any) => {
     return parkingSlot.vehicle ? (
       parkingSlot.vehicle.checkOutTime ? (
-        <Flex direction="row" mt={4}>
+        <Flex direction="row" mt={3}>
           <Text size="sm">Check Out Time:</Text>
           <Tag
             size={"md"}
@@ -115,17 +115,15 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
   const getLastFeePaid = (parkingSlot: any) => {
     return parkingSlot.vehicle ? (
       parkingSlot.vehicle.lastBillPaid !== null ? (
-        <Flex direction="column" alignItems="start">
-          <Text size="sm" mt={2}>
-            Last Fee Paid:
-          </Text>
+        <Flex direction="row" alignItems="start" mt={3}>
+          <Text size="sm">Last Fee Paid:</Text>
           <Tag
             size={"md"}
             borderRadius="full"
             variant="solid"
             bg="green.400"
             textAlign="center"
-            mt={2}
+            ml={2}
           >
             P{currencyFormat(parkingSlot.vehicle.lastBillPaid)}
           </Tag>
@@ -137,17 +135,15 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
   const getTotalFeePaid = (parkingSlot: any) => {
     return parkingSlot.vehicle ? (
       parkingSlot.vehicle.totalContinuousBill !== null ? (
-        <Flex direction="column" ml={2} alignItems="start">
-          <Text size="sm" mt={2}>
-            Total Fee Paid:
-          </Text>
+        <Flex direction="row" alignItems="start" mt={3}>
+          <Text size="sm">Total Fee Paid:</Text>
           <Tag
             size={"md"}
             borderRadius="full"
             variant="solid"
             bg="green.400"
             textAlign="center"
-            mt={2}
+            ml={2}
           >
             P{currencyFormat(parkingSlot.vehicle.totalContinuousBill)}
           </Tag>
@@ -159,7 +155,7 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
   const getRunningBill = (parkingSlot: any) => {
     return parkingSlot.vehicle ? (
       parkingSlot.vehicle.totalBill !== null ? (
-        <Flex direction="column" ml={2} alignItems="start" mt={2}>
+        <Flex direction="row" alignItems="start" mt={3}>
           <Text size="sm">Running Fee:</Text>
           <Tag
             size={"md"}
@@ -167,7 +163,7 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
             variant="solid"
             bg="green.400"
             textAlign="center"
-            mt={2}
+            ml={2}
           >
             P{currencyFormat(parkingSlot.vehicle.totalBill)}
           </Tag>
@@ -179,7 +175,7 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
   const getIsContinuousRate = (parkingSlot: any) => {
     return parkingSlot.vehicle ? (
       parkingSlot.vehicle.isContinuousRate !== null ? (
-        <Flex direction="row" mt={4} alignItems="start">
+        <Flex direction="row" mt={3} alignItems="start">
           <Text size="sm">Is Continuous Rate:</Text>
           <Tag
             size={"md"}
@@ -271,13 +267,9 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
 
                 {getCheckInTime(parkingSlot)}
                 {getCheckOutTime(parkingSlot)}
-
-                <Flex direction="row" mt={1}>
-                  {getLastFeePaid(parkingSlot)}
-                  {getTotalFeePaid(parkingSlot)}
-                  {getRunningBill(parkingSlot)}
-                </Flex>
-
+                {getLastFeePaid(parkingSlot)}
+                {getTotalFeePaid(parkingSlot)}
+                {getRunningBill(parkingSlot)}
                 {getIsContinuousRate(parkingSlot)}
               </Flex>
             ) : null
