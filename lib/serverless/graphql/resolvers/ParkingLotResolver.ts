@@ -315,6 +315,7 @@ export class ParkingLotResolver {
         },
       },
       order: {
+        entryPoints: { name: "ASC" },
         id: "ASC",
       },
     })
@@ -332,6 +333,7 @@ export class ParkingLotResolver {
         },
       },
       order: {
+        entryPoints: { name: "ASC" },
         parkingSlots: {
           id: "ASC",
           entryPointDistances: { entryPoint: { name: "ASC" } },
