@@ -269,7 +269,7 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
                 {getCheckOutTime(parkingSlot)}
                 {getLastFeePaid(parkingSlot)}
                 {getTotalFeePaid(parkingSlot)}
-                {getRunningBill(parkingSlot)}
+                {/* {getRunningBill(parkingSlot)} */}
                 {getIsContinuousRate(parkingSlot)}
               </Flex>
             ) : null
@@ -278,7 +278,7 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
         <PopoverFooter>
           <Flex>
             <Button size="sm" w="100%" onClick={() => onUnpark(parkingSlot)}>
-              Check Out
+              Checkout
             </Button>
           </Flex>
         </PopoverFooter>
