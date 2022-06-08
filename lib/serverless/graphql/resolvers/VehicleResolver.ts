@@ -35,4 +35,22 @@ export class VehicleResolver {
     })
     return vehicle
   }
+
+  @Query(() => Number, { nullable: true })
+  async getFeeToPay(
+    @Arg("id") id: number,
+    @Arg("checkOutTime") checkOutTime: Date
+  ): Promise<number | null> {
+    const vehicle = await Vehicle.findOneOrFail({
+      where: { id },
+      relations: {
+        parkingSlot: true,
+      },
+    })
+
+    const totalBill = await vehicle.totalBill(checkOutTime)
+    const continuousBill = totalBill - vehicle.totalContinuousBill
+
+    return continuousBill
+  }
 }

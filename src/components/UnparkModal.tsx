@@ -138,7 +138,7 @@ const UnparkModal: React.FC<any> = ({
                       color="white"
                       isLoading={isSubmitting}
                     >
-                      Check Out
+                      Checkout
                     </Button>
                     <Button colorScheme="blue" onClick={onClose}>
                       Close

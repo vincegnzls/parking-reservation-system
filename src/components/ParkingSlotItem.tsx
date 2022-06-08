@@ -45,10 +45,30 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
       : ""
   }
 
+  const getSlotType = (parkingSlot: any) => {
+    return parkingSlot && parkingSlot.type ? (
+      parkingSlot.type ? (
+        <Flex direction="row">
+          <Text size="sm">Slot:</Text>
+          <Tag
+            size={"md"}
+            borderRadius="full"
+            variant="solid"
+            bg="green.400"
+            textAlign="center"
+            ml={2}
+          >
+            Slot {parkingSlot.id} ({ParkingType[parkingSlot.type]})
+          </Tag>
+        </Flex>
+      ) : null
+    ) : null
+  }
+
   const getPlateNumber = (parkingSlot: any) => {
     return parkingSlot.vehicle ? (
       parkingSlot.vehicle.plateNumber ? (
-        <Flex direction="row">
+        <Flex direction="row" mt={3}>
           <Text size="sm">Plate Number:</Text>
           <Tag
             size={"md"}
@@ -60,6 +80,28 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
           >
             {parkingSlot.vehicle.plateNumber} (
             {VehicleSize[parkingSlot.vehicle.size]})
+          </Tag>
+        </Flex>
+      ) : null
+    ) : null
+  }
+
+  const getContinuousCheckInTime = (parkingSlot: any) => {
+    return parkingSlot.vehicle ? (
+      parkingSlot.vehicle.isContinuousRate ? (
+        <Flex direction="row" mt={3}>
+          <Text size="sm">First Check In Time:</Text>
+          <Tag
+            size={"md"}
+            borderRadius="full"
+            variant="solid"
+            bg="green.400"
+            textAlign="center"
+            ml={2}
+          >
+            {moment(parkingSlot.vehicle.checkInTime).format(
+              "MMM D, YYYY, h:mm A"
+            )}
           </Tag>
         </Flex>
       ) : null
@@ -249,6 +291,7 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
           {parkingSlot.vehicle ? (
             parkingSlot.vehicle.lastEntryPoint ? (
               <Flex direction="column" alignItems="start">
+                {getSlotType(parkingSlot)}
                 {getPlateNumber(parkingSlot)}
 
                 <Flex mt={3}>
@@ -264,6 +307,7 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
                     {getEntryPoint(parkingSlot)}
                   </Tag>
                 </Flex>
+                {getContinuousCheckInTime(parkingSlot)}
                 {getCheckInTime(parkingSlot)}
                 {getCheckOutTime(parkingSlot)}
                 {getLastFeePaid(parkingSlot)}
