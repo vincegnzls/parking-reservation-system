@@ -1,11 +1,9 @@
 import { DataSource } from "typeorm"
-import {
-  ParkingLot,
-  Vehicle,
-  EntryPoint,
-  EntryPointToParkingSlotDistance,
-  ParkingSlot,
-} from "../entities/ParkingEntities"
+import { EntryPoint } from "../entities/EntryPoint"
+import { EntryPointToParkingSlotDistance } from "../entities/EntryPointToParkingSlotDistance"
+import { ParkingLot } from "../entities/ParkingLot"
+import { ParkingSlot } from "../entities/ParkingSlot"
+import { Vehicle } from "../entities/Vehicle"
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -16,9 +14,9 @@ export const AppDataSource = new DataSource({
   port: 5432,
   entities: [
     EntryPoint,
+    ParkingSlot,
     Vehicle,
     ParkingLot,
-    ParkingSlot,
     EntryPointToParkingSlotDistance,
   ],
   synchronize: true,

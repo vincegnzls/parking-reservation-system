@@ -1,5 +1,5 @@
 import { Resolver, Arg, Query } from "type-graphql"
-import { ParkingLot, Vehicle } from "../../entities/ParkingEntities"
+import { Vehicle } from "../../entities/Vehicle"
 
 @Resolver()
 export class VehicleResolver {

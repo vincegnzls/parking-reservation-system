@@ -8,20 +8,15 @@ import {
   ObjectType,
 } from "type-graphql"
 import { Equal, MoreThanOrEqual } from "typeorm"
-import {
-  ParkingLot,
-  ParkingSlot,
-  EntryPoint,
-  EntryPointToParkingSlotDistance,
-  Vehicle,
-} from "../../entities/ParkingEntities"
+
+import { ParkingType } from "../../../../src/types"
+import { EntryPoint } from "../../entities/EntryPoint"
+import { EntryPointToParkingSlotDistance } from "../../entities/EntryPointToParkingSlotDistance"
+import { ParkingLot } from "../../entities/ParkingLot"
+import { ParkingSlot } from "../../entities/ParkingSlot"
+import { Vehicle } from "../../entities/Vehicle"
 import { IContext } from "../../utils/types"
-import {
-  ParkArgs,
-  ParkingLotArgs,
-  ParkingType,
-  UnparkArgs,
-} from "../types/ParkingLotTypes"
+import { ParkArgs, ParkingLotArgs, UnparkArgs } from "../args/ParkingLotArgs"
 
 @ObjectType()
 class ParkResponse {

@@ -1,19 +1,18 @@
-import { ParkingSlot } from "../entities/ParkingEntities"
-import { ParkingType } from "../graphql/types/ParkingLotTypes"
+import { ParkingType } from "../../../src/types"
 
-const FLAT_RATE = 40
+export const FLAT_RATE = 40
 const DAILY_RATE = 5000
 const FLAT_RATE_DURATION = 3
 
 interface RateArgs {
-  _vehicleId: number
-  _checkInTime: Date | undefined | null
-  _checkOutTime: Date | undefined | null
+  _parkingSlotType?: ParkingType | undefined | null
+  _checkInTime?: Date | undefined | null
+  _checkOutTime?: Date | undefined | null
   _hours?: number
 }
 
 export const getRate = async ({
-  _vehicleId,
+  _parkingSlotType,
   _checkInTime,
   _checkOutTime,
   _hours,
@@ -25,17 +24,17 @@ export const getRate = async ({
     checkOutTime = new Date()
   }
 
-  if (checkInTime && checkOutTime) {
-    const parkingSlot = await ParkingSlot.findOne({
-      where: { vehicle: { id: _vehicleId } },
-    })
+  if ((checkInTime && checkOutTime) || _hours) {
+    if (_parkingSlotType) {
+      let hoursParked = 0
 
-    if (parkingSlot) {
-      const hoursParked = _hours
-        ? Math.ceil(_hours)
-        : Math.ceil(
-            Math.abs(checkOutTime.getTime() - checkInTime.getTime()) / 36e5
-          )
+      if (_hours) {
+        hoursParked = _hours
+      } else if (checkInTime && checkOutTime) {
+        hoursParked = Math.ceil(
+          Math.abs(checkOutTime.getTime() - checkInTime.getTime()) / 36e5
+        )
+      }
 
       if (hoursParked > FLAT_RATE_DURATION) {
         const dailyCount = Math.floor(hoursParked / 24)
@@ -48,7 +47,7 @@ export const getRate = async ({
           remainingHours = hoursParked - FLAT_RATE_DURATION
         }
 
-        switch (parkingSlot.type) {
+        switch (_parkingSlotType) {
           case ParkingType.SP:
             exceedingFee = remainingHours * 20
             break
