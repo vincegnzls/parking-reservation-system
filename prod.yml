@@ -14,20 +14,6 @@ services:
     ports:
       - "80:3000"
 
-  # postgres:
-  #   build:
-  #     context: .
-  #     dockerfile: ./lib/serverless/compose/postgres/Dockerfile
-  #   image: paymongo_prod_postgres
-  #   container_name: paymongo_prod_postgres
-  #   volumes:
-  #     - paymongo_local_postgres_data:/var/lib/postgresql/data:Z
-  #     - paymongo_local_postgres_data_backups:/backups:z
-  #   env_file:
-  #     - ./.envs/.local/.postgres
-  #   ports:
-  #     - "5432:5432"
-
   redis:
     image: redis:6
     container_name: paymongo_local_redis
