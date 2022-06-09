@@ -20,8 +20,8 @@ export const config: PageConfig = {
   },
 }
 
-const REDIS_URL: string = process.env.REDIS_URL || ""
-const redis = new Redis(REDIS_URL)
+// const REDIS_URL: string = process.env.REDIS_URL || ""
+// const redis = new Redis(REDIS_URL)
 
 const apolloServer = new ApolloServer({
   schema: await buildSchema({
@@ -35,7 +35,7 @@ const apolloServer = new ApolloServer({
     return {
       req,
       res,
-      redis,
+      // redis,
     }
   },
   introspection: true,

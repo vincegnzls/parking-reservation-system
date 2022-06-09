@@ -1,7 +1,8 @@
+import { IncomingMessage, ServerResponse } from "http"
 import Redis from "ioredis"
 
 export interface IContext {
-  req: Request & { session: any }
-  res: Response
+  req: any
+  res: any
   redis: Redis
 }
