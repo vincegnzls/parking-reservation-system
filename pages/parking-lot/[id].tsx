@@ -1,8 +1,8 @@
-import { GetServerSideProps, NextPage } from "next"
+import { NextPage } from "next"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { useQuery } from "@apollo/client"
-import { Flex, Tag, Text, useDisclosure } from "@chakra-ui/react"
+import { Flex, SimpleGrid, Tag, Text, useDisclosure } from "@chakra-ui/react"
 
 import client from "../../apollo-client"
 import NavBar from "../../src/components/NavBar"
@@ -12,7 +12,7 @@ import UnparkModal from "../../src/components/UnparkModal"
 import FeeSummaryModal from "../../src/components/FeeSummaryModal"
 import ParkingSlotList from "../../src/components/ParkingSlotList"
 
-const ParkingLot: NextPage = () => {
+const ParkingLot: NextPage = (props: any) => {
   const router = useRouter()
   const { id }: ParkingLotQuery = router.query
   const [parkingSlots, setParkingSlots] = useState<any[]>([])
@@ -38,18 +38,10 @@ const ParkingLot: NextPage = () => {
 
   const renderEntryPoints = () => {
     return entryPoints.map((entryPoint, idx) => (
-      <Tag
-        borderRadius={12}
-        key={idx}
-        size={"lg"}
-        bg="green.400"
-        mb={10}
-        color="white"
-        mr={3}
-        px={6}
-        py={4}
-      >
-        <Text textTransform="capitalize">{entryPoint.name.toUpperCase()}</Text>
+      <Tag borderRadius={12} key={idx} size={"lg"} px={6} py={4}>
+        <Text textTransform="capitalize" textAlign="center" w="100%">
+          {entryPoint.name.toUpperCase()}
+        </Text>
       </Tag>
     ))
   }
@@ -61,7 +53,7 @@ const ParkingLot: NextPage = () => {
 
   return (
     <>
-      <NavBar fetchParkingSlots={fetchParkingSlots} />
+      <NavBar fetchParkingSlots={fetchParkingSlots} me={props.me} />
       <Flex
         direction="column"
         justifyContent="center"
@@ -69,7 +61,9 @@ const ParkingLot: NextPage = () => {
         pb={16}
         scrollBehavior="auto"
       >
-        <Flex>{renderEntryPoints()}</Flex>
+        <SimpleGrid spacing={4} columns={6} minChildWidth="230px" mb={8}>
+          {renderEntryPoints()}
+        </SimpleGrid>
         <ParkingSlotList parkingSlots={parkingSlots} onUnpark={onUnpark} />
       </Flex>
       <UnparkModal
@@ -86,7 +80,7 @@ const ParkingLot: NextPage = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps = async (context: any) => {
   const id: any = context.query.id
 
   const { error, data } = await client.query({
