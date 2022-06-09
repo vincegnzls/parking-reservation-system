@@ -11,8 +11,9 @@ import { ParkingLotQuery } from "../../src/types"
 import UnparkModal from "../../src/components/UnparkModal"
 import FeeSummaryModal from "../../src/components/FeeSummaryModal"
 import ParkingSlotList from "../../src/components/ParkingSlotList"
+import { withAuth } from "../../src/utils"
 
-const ParkingLot: NextPage = () => {
+const ParkingLot: NextPage = (props: any) => {
   const router = useRouter()
   const { id }: ParkingLotQuery = router.query
   const [parkingSlots, setParkingSlots] = useState<any[]>([])
@@ -61,7 +62,7 @@ const ParkingLot: NextPage = () => {
 
   return (
     <>
-      <NavBar fetchParkingSlots={fetchParkingSlots} />
+      <NavBar fetchParkingSlots={fetchParkingSlots} me={props.me} />
       <Flex
         direction="column"
         justifyContent="center"
@@ -86,7 +87,7 @@ const ParkingLot: NextPage = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps = withAuth(async (context: any) => {
   const id: any = context.query.id
 
   const { error, data } = await client.query({
@@ -110,6 +111,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       error: error ? error.message : null,
     },
   }
-}
+})
 
 export default ParkingLot

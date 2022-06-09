@@ -2,11 +2,7 @@ import { Flex } from "@chakra-ui/react"
 import React from "react"
 import NavBarContent from "./NavBarContent"
 
-const NavBar: React.FC<any> = ({
-  fetchParkingLots,
-  fetchParkingSlots,
-  router,
-}) => {
+const NavBar: React.FC<any> = ({ fetchParkingLots, fetchParkingSlots, me }) => {
   return (
     <Flex
       justifyContent="space-between"
@@ -17,6 +13,7 @@ const NavBar: React.FC<any> = ({
       <NavBarContent
         fetchParkingLots={fetchParkingLots}
         fetchParkingSlots={fetchParkingSlots}
+        me={me}
       />
     </Flex>
   )

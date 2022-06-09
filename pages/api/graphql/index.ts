@@ -9,6 +9,7 @@ import Redis from "ioredis"
 import { AppDataSource } from "../../../lib/serverless/utils/db"
 import { ParkingLotResolver } from "../../../lib/serverless/graphql/resolvers/ParkingLotResolver"
 import { VehicleResolver } from "../../../lib/serverless/graphql/resolvers/VehicleResolver"
+import { UserResolver } from "../../../lib/serverless/graphql/resolvers/UserResolver"
 
 const cors = Cors()
 
@@ -19,12 +20,12 @@ export const config: PageConfig = {
   },
 }
 
-// const REDIS_URL: string = process.env.REDIS_URL || ""
-// const redis = new Redis(REDIS_URL)
+const REDIS_URL: string = process.env.REDIS_URL || ""
+const redis = new Redis(REDIS_URL)
 
 const apolloServer = new ApolloServer({
   schema: await buildSchema({
-    resolvers: [ParkingLotResolver, VehicleResolver],
+    resolvers: [UserResolver, ParkingLotResolver, VehicleResolver],
   }),
   context: async ({ req, res }) => {
     try {
@@ -34,7 +35,7 @@ const apolloServer = new ApolloServer({
     return {
       req,
       res,
-      // redis,
+      redis,
     }
   },
   introspection: true,

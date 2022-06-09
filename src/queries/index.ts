@@ -1,5 +1,16 @@
 import { gql } from "@apollo/client"
 
+export const ME = gql`
+  query Me {
+    me {
+      userId
+      firstName
+      lastName
+      username
+    }
+  }
+`
+
 export const GET_PARKING_LOTS = gql`
   query GetParkingLots {
     getParkingLots {

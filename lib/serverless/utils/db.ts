@@ -3,6 +3,7 @@ import { EntryPoint } from "../entities/EntryPoint"
 import { EntryPointToParkingSlotDistance } from "../entities/EntryPointToParkingSlotDistance"
 import { ParkingLot } from "../entities/ParkingLot"
 import { ParkingSlot } from "../entities/ParkingSlot"
+import { User } from "../entities/User"
 import { Vehicle } from "../entities/Vehicle"
 
 export const AppDataSource = new DataSource({
@@ -13,6 +14,7 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASS,
   port: 5432,
   entities: [
+    User,
     EntryPoint,
     ParkingSlot,
     Vehicle,
