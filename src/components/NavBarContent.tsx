@@ -40,7 +40,7 @@ const NavBarContent: React.FC<any> = ({
         onClick={toggleColorMode}
         size="md"
         ml={2}
-        mt={{ base: 2, lg: 0 }}
+        mt={{ base: me ? 2 : 0, lg: 0 }}
         key={2}
       >
         {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
