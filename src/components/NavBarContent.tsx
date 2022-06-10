@@ -1,3 +1,4 @@
+import React from "react"
 import { MoonIcon, SunIcon } from "@chakra-ui/icons"
 import {
   Box,
@@ -7,18 +8,19 @@ import {
   useColorMode,
   Link,
 } from "@chakra-ui/react"
-import { withRouter } from "next/router"
+import { useRouter, withRouter } from "next/router"
 import NextLink from "next/link"
-import React from "react"
 import AddParkingLotModal from "./AddParkingLotModal"
 import ParkModal from "./ParkModal"
+import { removeCookies } from "cookies-next"
 
 const NavBarContent: React.FC<any> = ({
   fetchParkingLots,
   fetchParkingSlots,
-  router,
+  me,
 }) => {
   const { colorMode, toggleColorMode } = useColorMode()
+  const router = useRouter()
 
   const renderNavButtons = () => {
     const navButtons: React.ReactElement<any>[] = []
@@ -44,6 +46,28 @@ const NavBarContent: React.FC<any> = ({
         {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
       </Button>
     )
+
+    if (me) {
+      const onLogout = () => {
+        removeCookies("userId")
+        router.push("/login")
+      }
+
+      navButtons.push(
+        <Button
+          _hover={{ opacity: 0.8 }}
+          bg="red.400"
+          color="white"
+          size="md"
+          ml={2}
+          mt={{ base: 2, lg: 0 }}
+          onClick={onLogout}
+          key={3}
+        >
+          Logout
+        </Button>
+      )
+    }
 
     return navButtons
   }

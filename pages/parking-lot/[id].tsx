@@ -11,6 +11,7 @@ import { ParkingLotQuery } from "../../src/types"
 import UnparkModal from "../../src/components/UnparkModal"
 import FeeSummaryModal from "../../src/components/FeeSummaryModal"
 import ParkingSlotList from "../../src/components/ParkingSlotList"
+import { withAuth } from "../../src/utils"
 
 const ParkingLot: NextPage = (props: any) => {
   const router = useRouter()
@@ -80,7 +81,7 @@ const ParkingLot: NextPage = (props: any) => {
   )
 }
 
-export const getServerSideProps = async (context: any) => {
+export const getServerSideProps = withAuth(async (context: any) => {
   const id: any = context.query.id
 
   const { error, data } = await client.query({
@@ -104,6 +105,6 @@ export const getServerSideProps = async (context: any) => {
       error: error ? error.message : null,
     },
   }
-}
+})
 
 export default ParkingLot

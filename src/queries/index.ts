@@ -1,5 +1,27 @@
 import { gql } from "@apollo/client"
 
+export const ME = gql`
+  query Me {
+    me {
+      userId
+      firstName
+      lastName
+      username
+    }
+  }
+`
+
+export const GET_USER = gql`
+  query GetUser($userId: Float!) {
+    getUser(userId: $userId) {
+      userId
+      firstName
+      lastName
+      username
+    }
+  }
+`
+
 export const GET_PARKING_LOTS = gql`
   query GetParkingLots {
     getParkingLots {

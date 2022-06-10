@@ -13,7 +13,8 @@ services:
       - postgres
       - redis
     volumes:
-      - .:/app
+      - .:/usr/src/app/my-app
+      - /usr/src/app/my-app/node_modules
     ports:
       - "3000:3000"
 

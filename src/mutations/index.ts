@@ -55,3 +55,22 @@ export const UNPARK = gql`
     }
   }
 `
+
+export const LOGIN = gql`
+  mutation Login($password: String!, $username: String!) {
+    login(password: $password, username: $username) {
+      errors {
+        field
+        message
+      }
+      user {
+        userId
+      }
+    }
+  }
+`
+export const LOGOUT = gql`
+  mutation Mutation {
+    logout
+  }
+`

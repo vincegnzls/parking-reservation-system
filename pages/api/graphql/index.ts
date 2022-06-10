@@ -4,11 +4,12 @@ import { ApolloServer } from "apollo-server-micro"
 import Cors from "micro-cors"
 import type { PageConfig } from "next"
 import { buildSchema } from "type-graphql"
-import Redis from "ioredis"
 
 import { AppDataSource } from "../../../lib/serverless/utils/db"
 import { ParkingLotResolver } from "../../../lib/serverless/graphql/resolvers/ParkingLotResolver"
 import { VehicleResolver } from "../../../lib/serverless/graphql/resolvers/VehicleResolver"
+import { UserResolver } from "../../../lib/serverless/graphql/resolvers/UserResolver"
+import { send } from "micro"
 
 const cors = Cors()
 
@@ -19,12 +20,9 @@ export const config: PageConfig = {
   },
 }
 
-// const REDIS_URL: string = process.env.REDIS_URL || ""
-// const redis = new Redis(REDIS_URL)
-
 const apolloServer = new ApolloServer({
   schema: await buildSchema({
-    resolvers: [ParkingLotResolver, VehicleResolver],
+    resolvers: [UserResolver, ParkingLotResolver, VehicleResolver],
   }),
   context: async ({ req, res }) => {
     try {
@@ -34,7 +32,6 @@ const apolloServer = new ApolloServer({
     return {
       req,
       res,
-      // redis,
     }
   },
   introspection: true,
@@ -44,8 +41,7 @@ await apolloServer.start()
 
 export default cors((req, res) => {
   if (req.method === "OPTIONS") {
-    res.end()
-    return false
+    send(res, 200, "ok")
   }
 
   return apolloServer.createHandler({
