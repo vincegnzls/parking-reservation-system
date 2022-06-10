@@ -38,27 +38,35 @@ export function withAuth(gssp: any) {
     }
 
     if (userId) {
-      const { error, data } = await client.query({
-        query: GET_USER,
-        variables: {
-          userId: parseInt(userId),
-        },
-        fetchPolicy: "no-cache",
-      })
+      try {
+        const { error, data } = await client.query({
+          query: GET_USER,
+          variables: {
+            userId: parseInt(userId),
+          },
+          fetchPolicy: "no-cache",
+        })
 
-      if (!data.getUser) {
+        if (!data.getUser) {
+          return {
+            redirect: {
+              destination: "/login",
+            },
+          }
+        }
+
+        return {
+          props: {
+            ...gsspData.props,
+            me: data.getUser,
+          },
+        }
+      } catch (_) {
         return {
           redirect: {
             destination: "/login",
           },
         }
-      }
-
-      return {
-        props: {
-          ...gsspData.props,
-          me: data.getUser,
-        },
       }
     } else {
       return {
@@ -88,28 +96,30 @@ export function withoutAuth(gssp: any) {
     }
 
     if (userId) {
-      const { error, data } = await client.query({
-        query: GET_USER,
-        variables: {
-          userId: parseInt(userId),
-        },
-        fetchPolicy: "no-cache",
-      })
+      try {
+        const { error, data } = await client.query({
+          query: GET_USER,
+          variables: {
+            userId: parseInt(userId),
+          },
+          fetchPolicy: "no-cache",
+        })
 
-      if (data.getUser) {
+        if (data.getUser) {
+          return {
+            redirect: {
+              destination: "/",
+            },
+          }
+        }
+
         return {
-          redirect: {
-            destination: "/",
+          props: {
+            ...gsspData.props,
+            me: data.getUser,
           },
         }
-      }
-
-      return {
-        props: {
-          ...gsspData.props,
-          me: data.getUser,
-        },
-      }
+      } catch (_) {}
     }
 
     return {
