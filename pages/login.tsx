@@ -24,6 +24,19 @@ const Login: React.FC<loginProps> = () => {
   const [login] = useMutation(LOGIN)
   const router = useRouter()
 
+  const validate = (values: any) => {
+    const errors: any = {}
+
+    if (!values.username) {
+      errors.username = "Required"
+    }
+    if (!values.password) {
+      errors.password = "Required"
+    }
+
+    return errors
+  }
+
   return (
     <>
       <NavBar />
@@ -35,14 +48,15 @@ const Login: React.FC<loginProps> = () => {
       >
         <Formik
           initialValues={{ username: "", password: "" }}
+          validate={validate}
           onSubmit={async (values, { setErrors, resetForm }) => {
             const response = await login({ variables: values })
             if (response.data?.login.errors) {
               setErrors(toErrorMap(response.data?.login.errors))
             } else if (response.data?.login.user) {
               setCookies("userId", response.data?.login.user.userId)
+              await router.push("/")
               resetForm()
-              router.push("/")
             }
           }}
         >
