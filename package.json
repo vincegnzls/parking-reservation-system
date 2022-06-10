@@ -23,7 +23,6 @@
     "framer-motion": "6",
     "graphql": "^15.3.0",
     "ioredis": "^5.0.6",
-    "js-cookie": "^3.0.1",
     "micro": "^9.3.4",
     "micro-cors": "^0.1.1",
     "moment": "^2.29.3",

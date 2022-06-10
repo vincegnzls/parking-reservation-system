@@ -1,3 +1,4 @@
+import React from "react"
 import { MoonIcon, SunIcon } from "@chakra-ui/icons"
 import {
   Box,
@@ -9,11 +10,9 @@ import {
 } from "@chakra-ui/react"
 import { useRouter, withRouter } from "next/router"
 import NextLink from "next/link"
-import React, { useEffect, useState } from "react"
 import AddParkingLotModal from "./AddParkingLotModal"
 import ParkModal from "./ParkModal"
-import { useMutation } from "@apollo/client"
-import { LOGOUT } from "../mutations"
+import { removeCookies } from "cookies-next"
 
 const NavBarContent: React.FC<any> = ({
   fetchParkingLots,
@@ -21,7 +20,6 @@ const NavBarContent: React.FC<any> = ({
   me,
 }) => {
   const { colorMode, toggleColorMode } = useColorMode()
-  const [logout, { loading }] = useMutation(LOGOUT)
   const router = useRouter()
 
   const renderNavButtons = () => {
@@ -50,8 +48,8 @@ const NavBarContent: React.FC<any> = ({
     )
 
     if (me) {
-      const onLogout = async () => {
-        await logout()
+      const onLogout = () => {
+        removeCookies("userId")
         router.push("/login")
       }
 
@@ -64,7 +62,6 @@ const NavBarContent: React.FC<any> = ({
           ml={2}
           mt={{ base: 2, lg: 0 }}
           onClick={onLogout}
-          isLoading={loading}
           key={3}
         >
           Logout

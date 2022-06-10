@@ -15,6 +15,7 @@ import NavBar from "../src/components/NavBar"
 import { LOGIN } from "../src/mutations"
 import { useMutation } from "@apollo/client"
 import { toErrorMap, withoutAuth } from "../src/utils"
+import { setCookies } from "cookies-next"
 
 interface loginProps {}
 
@@ -39,6 +40,7 @@ const Login: React.FC<loginProps> = () => {
             if (response.data?.login.errors) {
               setErrors(toErrorMap(response.data?.login.errors))
             } else if (response.data?.login.user) {
+              setCookies("userId", response.data?.login.user.userId)
               resetForm()
               router.push("/")
             }

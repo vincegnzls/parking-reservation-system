@@ -1,8 +1,9 @@
 import React, { useEffect } from "react"
 import { useRouter } from "next/router"
 import { useLazyQuery, useQuery } from "@apollo/client"
-import { ME } from "../queries"
+import { GET_USER, ME } from "../queries"
 import client from "../../apollo-client"
+import { getCookie } from "cookies-next"
 
 export const currencyFormat = (x: number) => {
   return x
@@ -21,52 +22,60 @@ export const toErrorMap = (errors: any[]) => {
 
 export function withAuth(gssp: any) {
   return async (context: any) => {
-    const { error, data } = await client.query({
-      query: ME,
-      fetchPolicy: "no-cache",
-    })
+    const userId = getCookie("userId", {
+      req: context.req,
+      res: context.res,
+    })?.toString()
 
-    if (!data.me) {
+    const gsspData = await gssp(context)
+
+    if (gsspData.redirect) {
+      return {
+        redirect: {
+          ...gsspData.redirect,
+        },
+      }
+    }
+
+    if (userId) {
+      const { error, data } = await client.query({
+        query: GET_USER,
+        variables: {
+          userId: parseInt(userId),
+        },
+        fetchPolicy: "no-cache",
+      })
+
+      if (!data.getUser) {
+        return {
+          redirect: {
+            destination: "/login",
+          },
+        }
+      }
+
+      return {
+        props: {
+          ...gsspData.props,
+          me: data.getUser,
+        },
+      }
+    } else {
       return {
         redirect: {
           destination: "/login",
         },
       }
     }
-
-    const gsspData = await gssp(context)
-
-    if (gsspData.redirect) {
-      return {
-        redirect: {
-          ...gsspData.redirect,
-        },
-      }
-    }
-
-    return {
-      props: {
-        ...gsspData.props,
-        me: data.me,
-      },
-    }
   }
 }
 
 export function withoutAuth(gssp: any) {
   return async (context: any) => {
-    const { error, data } = await client.query({
-      query: ME,
-      fetchPolicy: "no-cache",
-    })
-
-    if (data.me) {
-      return {
-        redirect: {
-          destination: "/",
-        },
-      }
-    }
+    const userId = getCookie("userId", {
+      req: context.req,
+      res: context.res,
+    })?.toString()
 
     const gsspData = await gssp(context)
 
@@ -78,10 +87,34 @@ export function withoutAuth(gssp: any) {
       }
     }
 
+    if (userId) {
+      const { error, data } = await client.query({
+        query: GET_USER,
+        variables: {
+          userId: parseInt(userId),
+        },
+        fetchPolicy: "no-cache",
+      })
+
+      if (data.getUser) {
+        return {
+          redirect: {
+            destination: "/",
+          },
+        }
+      }
+
+      return {
+        props: {
+          ...gsspData.props,
+          me: data.getUser,
+        },
+      }
+    }
+
     return {
       props: {
         ...gsspData.props,
-        me: data.me,
       },
     }
   }

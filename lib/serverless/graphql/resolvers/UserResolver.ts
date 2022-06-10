@@ -10,7 +10,7 @@ import {
 } from "type-graphql"
 import { User } from "../../entities/User"
 import { IContext } from "../../utils/types"
-import Cookie from "js-cookie"
+import { getCookie, setCookies } from "cookies-next"
 
 @ObjectType()
 class FieldError {
@@ -45,8 +45,6 @@ export class UserResolver {
       password,
     }).save()
 
-    Cookie.set("userId", user.userId.toString())
-
     return user
   }
 
@@ -80,23 +78,20 @@ export class UserResolver {
       }
     }
 
-    Cookie.set("userId", user.userId.toString())
-
     return { user }
   }
 
   @Mutation(() => Boolean)
   async logout(@Ctx() context: IContext): Promise<boolean> {
-    Cookie.remove("userId")
-
     return true
   }
 
   @Query(() => User, { nullable: true })
   async me(@Ctx() context: IContext): Promise<User | null> {
-    let userId: any = 1
-
-    console.log("MEEEEEEEE69", context.req.cookies)
+    let userId: any = getCookie("userId", {
+      req: context.req,
+      res: context.res,
+    })
 
     if (!userId) {
       return null
