@@ -9,7 +9,7 @@ import {
   ManyToOne,
 } from "typeorm"
 import { VehicleSize } from "../../../src/types"
-import { getRate } from "../utils/rate"
+import { FLAT_RATE_DURATION, getHoursDiff, getRate } from "../utils/rate"
 import { EntryPoint } from "./EntryPoint"
 import { ParkingLot } from "./ParkingLot"
 import { ParkingSlot } from "./ParkingSlot"
@@ -73,12 +73,61 @@ export class Vehicle extends BaseEntity {
 
   @Field(() => Number)
   async totalBill(checkOutTime?: Date): Promise<number> {
+    if (
+      this.checkInTime &&
+      this.checkOutTime &&
+      this.lastCheckInTime &&
+      checkOutTime
+    ) {
+      const totalHoursPaid = getHoursDiff(this.checkInTime, this.checkOutTime)
+      const hoursToPay = getHoursDiff(this.lastCheckInTime, checkOutTime)
+
+      if (totalHoursPaid + hoursToPay <= FLAT_RATE_DURATION) {
+        return 0
+      } else {
+        return await getRate({
+          _parkingSlotType: this.parkingSlot?.type,
+          _hours: hoursToPay,
+          _isContinuous: this.isContinuousRate,
+        })
+      }
+    }
+
     return await getRate({
       _parkingSlotType: this.parkingSlot?.type,
       _checkInTime: this.checkInTime,
       _checkOutTime: checkOutTime ? checkOutTime : this.checkOutTime,
     })
   }
+
+  // @Field(() => Number)
+  // async continuousBill(checkOutTime?: Date): Promise<number> {
+  //   if (
+  //     this.checkInTime &&
+  //     this.checkOutTime &&
+  //     this.lastCheckInTime &&
+  //     checkOutTime
+  //   ) {
+  //     const totalHoursPaid = getHoursDiff(this.checkInTime, this.checkOutTime)
+  //     const hoursToPay = getHoursDiff(this.lastCheckInTime, checkOutTime)
+
+  //     if (totalHoursPaid + hoursToPay <= FLAT_RATE_DURATION) {
+  //       return 0
+  //     } else {
+  //       return await getRate({
+  //         _parkingSlotType: this.parkingSlot?.type,
+  //         _hours: hoursToPay,
+  //         _isContinuous: this.isContinuousRate,
+  //       })
+  //     }
+  //   }
+
+  //   return await getRate({
+  //     _parkingSlotType: this.parkingSlot?.type,
+  //     _checkInTime: this.checkInTime,
+  //     _checkOutTime: checkOutTime ? checkOutTime : this.checkOutTime,
+  //   })
+  // }
 
   _isContinuousRate(newCheckInTime: Date): boolean {
     if (this.checkOutTime) {

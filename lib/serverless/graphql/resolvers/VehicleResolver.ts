@@ -1,5 +1,6 @@
 import { Resolver, Arg, Query } from "type-graphql"
 import { Vehicle } from "../../entities/Vehicle"
+import { getRate } from "../../utils/rate"
 
 @Resolver()
 export class VehicleResolver {
@@ -49,8 +50,7 @@ export class VehicleResolver {
     })
 
     const totalBill = await vehicle.totalBill(checkOutTime)
-    const continuousBill = totalBill - vehicle.totalContinuousBill
 
-    return continuousBill
+    return totalBill
   }
 }

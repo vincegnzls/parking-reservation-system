@@ -2,21 +2,27 @@ import { ParkingType } from "../../../src/types"
 
 export const FLAT_RATE = 40
 const DAILY_RATE = 5000
-const FLAT_RATE_DURATION = 3
+export const FLAT_RATE_DURATION = 3
 
 interface RateArgs {
   _parkingSlotType?: ParkingType | undefined | null
   _checkInTime?: Date | undefined | null
   _checkOutTime?: Date | undefined | null
   _hours?: number
+  _isContinuous?: Boolean
 }
 
-export const getRate = async ({
+export const getHoursDiff = (startDate: Date, endDate: Date) => {
+  return Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / 36e5)
+}
+
+export const getRate = ({
   _parkingSlotType,
   _checkInTime,
   _checkOutTime,
   _hours,
-}: RateArgs): Promise<number> => {
+  _isContinuous,
+}: RateArgs): number => {
   const checkInTime = _checkInTime
   let checkOutTime = _checkOutTime
 
@@ -36,13 +42,15 @@ export const getRate = async ({
         )
       }
 
-      if (hoursParked > FLAT_RATE_DURATION) {
+      if (hoursParked > FLAT_RATE_DURATION || _isContinuous) {
         const dailyCount = Math.floor(hoursParked / 24)
         let remainingHours
         let exceedingFee = 0
 
-        if (hoursParked > 24) {
+        if (hoursParked > 24 || (hoursParked >= 24 && _isContinuous)) {
           remainingHours = hoursParked - 24 * dailyCount
+        } else if (hoursParked < 24 && _isContinuous) {
+          remainingHours = hoursParked
         } else {
           remainingHours = hoursParked - FLAT_RATE_DURATION
         }
@@ -59,10 +67,10 @@ export const getRate = async ({
             break
         }
 
-        if (hoursParked > 24) {
+        if (hoursParked > 24 || (hoursParked >= 24 && _isContinuous)) {
           return dailyCount * DAILY_RATE + exceedingFee
         } else {
-          return FLAT_RATE + exceedingFee
+          return _isContinuous ? exceedingFee : FLAT_RATE + exceedingFee
         }
       }
     } else {
@@ -70,5 +78,5 @@ export const getRate = async ({
     }
   }
 
-  return FLAT_RATE
+  return _isContinuous ? 0 : FLAT_RATE
 }

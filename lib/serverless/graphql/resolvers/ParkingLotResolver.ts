@@ -15,6 +15,7 @@ import { EntryPointToParkingSlotDistance } from "../../entities/EntryPointToPark
 import { ParkingLot } from "../../entities/ParkingLot"
 import { ParkingSlot } from "../../entities/ParkingSlot"
 import { Vehicle } from "../../entities/Vehicle"
+import { getRate } from "../../utils/rate"
 import { IContext } from "../../utils/types"
 import { ParkArgs, ParkingLotArgs, UnparkArgs } from "../args/ParkingLotArgs"
 
@@ -112,7 +113,7 @@ export class ParkingLotResolver {
         isAvailable: true,
         parkingLot: { id: parkingLotId },
         entryPointDistances: { entryPoint: { id: entryPointId } },
-        type: Equal(size),
+        type: MoreThanOrEqual(size),
       },
       relations: {
         vehicle: true,
@@ -125,25 +126,25 @@ export class ParkingLotResolver {
       },
     })
 
-    if (!parkingSlot) {
-      parkingSlot = await ParkingSlot.findOne({
-        where: {
-          isAvailable: true,
-          parkingLot: { id: parkingLotId },
-          entryPointDistances: { entryPoint: { id: entryPointId } },
-          type: MoreThanOrEqual(size),
-        },
-        relations: {
-          vehicle: true,
-          entryPointDistances: { entryPoint: true },
-          parkingLot: true,
-        },
-        order: {
-          entryPointDistances: { distance: "ASC" },
-          type: "ASC",
-        },
-      })
-    }
+    // if (!parkingSlot) {
+    //   parkingSlot = await ParkingSlot.findOne({
+    //     where: {
+    //       isAvailable: true,
+    //       parkingLot: { id: parkingLotId },
+    //       entryPointDistances: { entryPoint: { id: entryPointId } },
+    //       type: MoreThanOrEqual(size),
+    //     },
+    //     relations: {
+    //       vehicle: true,
+    //       entryPointDistances: { entryPoint: true },
+    //       parkingLot: true,
+    //     },
+    //     order: {
+    //       entryPointDistances: { distance: "ASC" },
+    //       type: "ASC",
+    //     },
+    //   })
+    // }
 
     if (parkingSlot) {
       let vehicle = await Vehicle.findOne({
@@ -271,16 +272,23 @@ export class ParkingLotResolver {
       }
 
       const totalBill = await vehicle.totalBill(newCheckOutTime)
-      const continuousBill = totalBill - vehicle.totalContinuousBill
+      // const continuousBill = vehicle.isContinuousRate
+      //   ? totalBill -
+      //     getRate({
+      //       _parkingSlotType: vehicle.parkingSlot?.type,
+      //       _checkInTime: vehicle.checkInTime,
+      //       _checkOutTime: vehicle.checkOutTime,
+      //     })
+      //   : totalBill
       let totalContinuousBill =
         parseFloat(vehicle.totalContinuousBill.toString()) +
-        parseFloat(continuousBill.toString())
+        parseFloat(totalBill.toString())
 
       await Vehicle.update(
         { id: vehicle.id },
         {
           checkOutTime: newCheckOutTime,
-          lastBillPaid: continuousBill,
+          lastBillPaid: totalBill,
           totalContinuousBill,
         }
       )
