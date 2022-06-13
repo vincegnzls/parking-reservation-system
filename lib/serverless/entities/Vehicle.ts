@@ -45,6 +45,10 @@ export class Vehicle extends BaseEntity {
   @Column({ type: "timestamptz", nullable: true })
   checkOutTime?: Date | null
 
+  @Field(() => Number, { defaultValue: 0 })
+  @Column({ type: "numeric", default: 0 })
+  hoursParked: number = 0
+
   @Field(() => ParkingSlot, { nullable: true })
   @OneToOne(() => ParkingSlot, (parkingSlot) => parkingSlot.vehicle)
   parkingSlot?: Relation<ParkingSlot> | null
@@ -79,18 +83,33 @@ export class Vehicle extends BaseEntity {
       this.lastCheckInTime &&
       checkOutTime
     ) {
-      const totalHoursPaid = getHoursDiff(this.checkInTime, this.checkOutTime)
-      const hoursToPay = getHoursDiff(this.lastCheckInTime, checkOutTime)
+      let newHoursParked = getHoursDiff(
+        this.lastCheckInTime ? this.lastCheckInTime : new Date(),
+        checkOutTime
+      )
+      const currentHoursParked = this.hoursParked
+      const totalHoursParked = Math.ceil(
+        parseFloat(currentHoursParked.toString()) +
+          parseFloat(newHoursParked.toString())
+      )
 
-      if (totalHoursPaid + hoursToPay <= FLAT_RATE_DURATION) {
+      if (totalHoursParked <= FLAT_RATE_DURATION) {
         return 0
-      } else {
-        return await getRate({
-          _parkingSlotType: this.parkingSlot?.type,
-          _hours: hoursToPay,
-          _isContinuous: this.isContinuousRate,
-        })
       }
+
+      if (Math.ceil(currentHoursParked) < FLAT_RATE_DURATION) {
+        newHoursParked -= FLAT_RATE_DURATION - Math.ceil(currentHoursParked)
+      }
+
+      console.log("currentHoursParked", currentHoursParked)
+      console.log("totalHoursParked", totalHoursParked)
+      console.log("newHoursParked", newHoursParked)
+
+      return await getRate({
+        _parkingSlotType: this.parkingSlot?.type,
+        _hours: newHoursParked,
+        _isContinuous: this.isContinuousRate,
+      })
     }
 
     return await getRate({

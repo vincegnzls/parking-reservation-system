@@ -12,8 +12,25 @@ interface RateArgs {
   _isContinuous?: Boolean
 }
 
-export const getHoursDiff = (startDate: Date, endDate: Date) => {
-  return Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / 36e5)
+export const getHoursDiff = (
+  startDate: Date,
+  endDate: Date,
+  isCeil = true,
+  isFloor = false
+) => {
+  let diff = Math.abs(endDate.getTime() - startDate.getTime()) / 36e5
+
+  if (isCeil) {
+    diff = Math.ceil(diff)
+    return diff
+  }
+
+  if (isFloor) {
+    diff = Math.floor(diff)
+    return diff
+  }
+
+  return diff
 }
 
 export const getRate = ({

@@ -15,7 +15,7 @@ import { EntryPointToParkingSlotDistance } from "../../entities/EntryPointToPark
 import { ParkingLot } from "../../entities/ParkingLot"
 import { ParkingSlot } from "../../entities/ParkingSlot"
 import { Vehicle } from "../../entities/Vehicle"
-import { getRate } from "../../utils/rate"
+import { getHoursDiff, getRate } from "../../utils/rate"
 import { IContext } from "../../utils/types"
 import { ParkArgs, ParkingLotArgs, UnparkArgs } from "../args/ParkingLotArgs"
 
@@ -182,6 +182,8 @@ export class ParkingLotResolver {
                 lastEntryPoint: entryPoint,
                 isContinuousRate: false,
                 lastParkingLot: parkingSlot.parkingLot,
+                totalContinuousBill: 0,
+                hoursParked: 0,
               }
             )
             vehicle = await Vehicle.findOneOrFail({
@@ -224,6 +226,7 @@ export class ParkingLotResolver {
               { id: vehicle.id },
               {
                 totalContinuousBill: 0,
+                hoursParked: 0,
               }
             )
           }
@@ -272,17 +275,16 @@ export class ParkingLotResolver {
       }
 
       const totalBill = await vehicle.totalBill(newCheckOutTime)
-      // const continuousBill = vehicle.isContinuousRate
-      //   ? totalBill -
-      //     getRate({
-      //       _parkingSlotType: vehicle.parkingSlot?.type,
-      //       _checkInTime: vehicle.checkInTime,
-      //       _checkOutTime: vehicle.checkOutTime,
-      //     })
-      //   : totalBill
       let totalContinuousBill =
         parseFloat(vehicle.totalContinuousBill.toString()) +
         parseFloat(totalBill.toString())
+
+      const hoursParked = getHoursDiff(
+        vehicle.lastCheckInTime ? vehicle.lastCheckInTime : new Date(),
+        newCheckOutTime,
+        false,
+        false
+      )
 
       await Vehicle.update(
         { id: vehicle.id },
@@ -290,6 +292,9 @@ export class ParkingLotResolver {
           checkOutTime: newCheckOutTime,
           lastBillPaid: totalBill,
           totalContinuousBill,
+          hoursParked:
+            parseFloat(vehicle.hoursParked.toString()) +
+            parseFloat(hoursParked.toString()),
         }
       )
       await ParkingSlot.update(
