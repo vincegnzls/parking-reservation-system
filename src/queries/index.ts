@@ -61,6 +61,7 @@ export const GET_PARKING_LOT_BY_ID = gql`
           totalBill
           lastBillPaid
           isContinuousRate
+          hoursParked
           totalContinuousBill
         }
       }

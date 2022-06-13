@@ -232,6 +232,26 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
     ) : null
   }
 
+  const getHoursParked = (parkingSlot: any) => {
+    return parkingSlot.vehicle ? (
+      parkingSlot.vehicle.hoursParked !== null ? (
+        <Flex direction="row" mt={3} alignItems="start">
+          <Text size="sm">Total Hours Parked:</Text>
+          <Tag
+            size={"md"}
+            borderRadius="full"
+            variant="solid"
+            bg="green.400"
+            textAlign="center"
+            ml={2}
+          >
+            {Math.ceil(parkingSlot.vehicle.hoursParked)}
+          </Tag>
+        </Flex>
+      ) : null
+    ) : null
+  }
+
   const getEntryPointDistances = (parkingSlot: any) => {
     return parkingSlot?.entryPointDistances?.map(
       (distance: any, idx: number) => (
@@ -314,6 +334,7 @@ const ParkingSlotItem: React.FC<any> = ({ idx, parkingSlot, onUnpark }) => {
                 {getTotalFeePaid(parkingSlot)}
                 {/* {getRunningBill(parkingSlot)} */}
                 {getIsContinuousRate(parkingSlot)}
+                {getHoursParked(parkingSlot)}
               </Flex>
             ) : null
           ) : null}
